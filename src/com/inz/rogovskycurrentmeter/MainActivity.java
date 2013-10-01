@@ -144,7 +144,7 @@ public class MainActivity extends Activity {
 	                // Send a message using content of the edit text widget
 	                TextView view = (TextView) findViewById(R.id.edit_text_out);
 	                String message = view.getText().toString();
-	                sendMessage(message);
+	                sendCommand(message);
 	            }
 	        });
 
@@ -195,7 +195,7 @@ public class MainActivity extends Activity {
      * Sends a message.
      * @param message  A string of text to send.
      */
-    private void sendMessage(String message) {
+    private void sendCommand(String message) {
         // Check that we're actually connected before trying anything
         if (mChatService.getState() != BtService.STATE_CONNECTED) {
             Toast.makeText(this, R.string.not_connected, Toast.LENGTH_SHORT).show();
@@ -221,7 +221,7 @@ public class MainActivity extends Activity {
             // If the action is a key-up event on the return key, send the message
             if (actionId == EditorInfo.IME_NULL && event.getAction() == KeyEvent.ACTION_UP) {
                 String message = view.getText().toString();
-                sendMessage(message);
+                sendCommand(message);
             }
             if(D) Log.i(TAG, "END onEditorAction");
             return true;
@@ -265,6 +265,7 @@ public class MainActivity extends Activity {
                 byte[] writeBuf = (byte[]) msg.obj;
                 // construct a string from the buffer
                 String writeMessage = new String(writeBuf);
+                
                 mConversationArrayAdapter.add("Me:  " + writeMessage);
                 break;
             case MESSAGE_READ:
