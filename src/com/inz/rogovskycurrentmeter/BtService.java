@@ -33,9 +33,9 @@ public class BtService {
 
 	    // Unique UUID for this application
 	    private static final UUID MY_UUID_SECURE =
-	        UUID.fromString("fa87c0d0-afac-11de-8a39-0800200c9a66");
+	        UUID.fromString("00001101-0000-1000-8000-00805F9B34F");
 	    private static final UUID MY_UUID_INSECURE =
-	        UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
+	        UUID.fromString("00001101-0000-1000-8000-00805F9B34F");
 
 	    // Member fields
 	    private final BluetoothAdapter mAdapter;
@@ -123,7 +123,7 @@ public class BtService {
 	        if (mConnectedThread != null) {mConnectedThread.cancel(); mConnectedThread = null;}
 
 	        // Start the thread to connect with the given device
-	        mConnectThread = new ConnectThread(device, secure);
+	        mConnectThread = new ConnectThread(device);
 	        mConnectThread.start();
 	        setState(STATE_CONNECTING);
 	    }
@@ -339,21 +339,18 @@ public class BtService {
 	        private final BluetoothDevice mmDevice;
 	        private String mSocketType;
 
-	        public ConnectThread(BluetoothDevice device, boolean secure) {// constructor 
+	        public ConnectThread(BluetoothDevice device) {// constructor 
 	            mmDevice = device;
 	            BluetoothSocket tmp = null;
-	            mSocketType = secure ? "Secure" : "Insecure";
+	            mSocketType =  "Secure" ;
 
 	            // Get a BluetoothSocket for a connection with the
 	            // given BluetoothDevice
 	            try {
-	                if (secure) {
+	               
 	                    tmp = device.createRfcommSocketToServiceRecord(
 	                            MY_UUID_SECURE);
-	                } else {
-	                    tmp = device.createInsecureRfcommSocketToServiceRecord(
-	                            MY_UUID_INSECURE);
-	                }
+	              
 	            } catch (IOException e) {
 	                Log.e(TAG, "Socket Type: " + mSocketType + "create() failed", e);
 	            }

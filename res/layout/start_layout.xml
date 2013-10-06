@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.76"
+        android:columnCount="1"
+        android:orientation="horizontal" >
+
+        <ImageButton
+            android:id="@+id/SearchForDevices"
+            android:layout_width="422dp"
+            android:layout_height="wrap_content"
+            android:layout_column="0"
+            android:layout_gravity="center"
+            android:layout_row="0"
+            android:layout_rowSpan="2"
+            android:src="@drawable/loupe" />
+
+        <ImageButton
+            android:id="@+id/Connect"
+            android:layout_width="419dp"
+            android:layout_height="140dp"
+            android:layout_column="0"
+            android:layout_gravity="center_horizontal"
+            android:layout_row="1"
+            android:src="@drawable/connect" />
+
+        <Space
+            android:layout_width="1dp"
+            android:layout_height="491dp"
+            android:layout_column="0"
+            android:layout_row="0" />
+    </GridLayout>
+
+</LinearLayout>

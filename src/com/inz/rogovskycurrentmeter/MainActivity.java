@@ -71,7 +71,7 @@ public class MainActivity extends Activity {
     private BtService mChatService = null;
 	
 
-	// na potrzeby odtwarzania dźwięków
+	// na potrzeby odtwarzania dzwieku
 	private MediaPlayer player;
 	private HashMap<String, BluetoothDevice> discoveredDevices = new HashMap<String, BluetoothDevice>();
 	private AlertDialogManager alertBuilder;
@@ -299,13 +299,7 @@ public class MainActivity extends Activity {
                 connectDevice(data, true);
             }
             break;
-        case REQUEST_CONNECT_DEVICE_INSECURE:
-            // When DeviceListActivity returns with a device to connect
-            if (resultCode == Activity.RESULT_OK) {
-                connectDevice(data, false);
-            }
-            break;
-        case REQUEST_ENABLE_BT:
+          case REQUEST_ENABLE_BT:
             // When the request to enable Bluetooth returns
             if (resultCode == Activity.RESULT_OK) {
                 // Bluetooth is now enabled, so set up a chat session
@@ -370,12 +364,6 @@ public class MainActivity extends Activity {
 			// Launch the DeviceListActivity to see devices and do scan
 			serverIntent = new Intent(this, BtDeviceListActivity.class);
 			startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_SECURE);
-			return true;
-		case R.id.insecure_connect_scan:
-			// Launch the DeviceListActivity to see devices and do scan
-			serverIntent = new Intent(this, BtDeviceListActivity.class);
-			startActivityForResult(serverIntent,
-					REQUEST_CONNECT_DEVICE_INSECURE);
 			return true;
 		case R.id.discoverable:
 			// Ensure this device is discoverable by others
