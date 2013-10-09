@@ -24,24 +24,20 @@ public class BtService {
 	 */
 
 	    // Debugging
-	    private static final String TAG = "BluetoothChatService";
+	    private static final String TAG = "CurrentMeter";
 	    private static final boolean D = true;
 
 	    // Name for the SDP record when creating server socket
-	    private static final String NAME_SECURE = "BluetoothChatSecure";
-	    private static final String NAME_INSECURE = "BluetoothChatInsecure";
+	    private static final String NAME_SECURE = "CurrentMeterBtSecure";
+	
 
 	    // Unique UUID for this application
 	    private static final UUID MY_UUID_SECURE =
-	        UUID.fromString("00001101-0000-1000-8000-00805F9B34F");
-	    private static final UUID MY_UUID_INSECURE =
-	        UUID.fromString("00001101-0000-1000-8000-00805F9B34F");
-
+	        UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 	    // Member fields
 	    private final BluetoothAdapter mAdapter;
 	    private final Handler mHandler;
 	    private AcceptThread mSecureAcceptThread;
-	    private AcceptThread mInsecureAcceptThread;
 	    private ConnectThread mConnectThread;
 	    private ConnectedThread mConnectedThread;
 	    private int mState;
@@ -97,12 +93,8 @@ public class BtService {
 
 	        // Start the thread to listen on a BluetoothServerSocket
 	        if (mSecureAcceptThread == null) {
-	            mSecureAcceptThread = new AcceptThread(true);
+	            mSecureAcceptThread = new AcceptThread();
 	            mSecureAcceptThread.start();
-	        }
-	        if (mInsecureAcceptThread == null) {
-	            mInsecureAcceptThread = new AcceptThread(false);
-	            mInsecureAcceptThread.start();
 	        }
 	    }
 
@@ -111,7 +103,7 @@ public class BtService {
 	     * @param device  The BluetoothDevice to connect
 	     * @param secure Socket Security type - Secure (true) , Insecure (false)
 	     */
-	    public synchronized void connect(BluetoothDevice device, boolean secure) {
+	    public synchronized void connect(BluetoothDevice device) {
 	        if (D) Log.d(TAG, "connect to: " + device);
 
 	        // Cancel any thread attempting to make a connection
@@ -148,11 +140,7 @@ public class BtService {
 	            mSecureAcceptThread.cancel();
 	            mSecureAcceptThread = null;
 	        }
-	        if (mInsecureAcceptThread != null) {
-	            mInsecureAcceptThread.cancel();
-	            mInsecureAcceptThread = null;
-	        }
-
+	     
 	        // Start the thread to manage the connection and perform transmissions
 	        mConnectedThread = new ConnectedThread(socket, socketType);
 	        mConnectedThread.start();
@@ -188,10 +176,7 @@ public class BtService {
 	            mSecureAcceptThread = null;
 	        }
 
-	        if (mInsecureAcceptThread != null) {
-	            mInsecureAcceptThread.cancel();
-	            mInsecureAcceptThread = null;
-	        }
+	    
 	        setState(STATE_NONE);
 	    }
 
@@ -222,9 +207,9 @@ public class BtService {
 	        bundle.putString(MainActivity.TOAST, "Unable to connect device");
 	        msg.setData(bundle);
 	        mHandler.sendMessage(msg);
-
 	        // Start the service over to restart listening mode
 	        BtService.this.start();
+	       
 	    }
 
 	    /**
@@ -252,19 +237,17 @@ public class BtService {
 	        private final BluetoothServerSocket mmServerSocket;
 	        private String mSocketType;
 
-	        public AcceptThread(boolean secure) {
+	        public AcceptThread() {
 	            BluetoothServerSocket tmp = null;
-	            mSocketType = secure ? "Secure":"Insecure";
+	            mSocketType = "Secure";
 
 	            // Create a new listening server socket
 	            try {
-	                if (secure) {
+	               
 	                    tmp = mAdapter.listenUsingRfcommWithServiceRecord(NAME_SECURE,
 	                        MY_UUID_SECURE);
-	                } else {
-	                    tmp = mAdapter.listenUsingInsecureRfcommWithServiceRecord(
-	                            NAME_INSECURE, MY_UUID_INSECURE);
-	                }
+	               
+	                
 	            } catch (IOException e) {
 	                Log.e(TAG, "Socket Type: " + mSocketType + "listen() failed", e);
 	            }

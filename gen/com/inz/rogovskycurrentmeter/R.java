@@ -38,6 +38,7 @@ public final class R {
         public static final int in=0x7f080007;
         public static final int new_devices=0x7f080005;
         public static final int paired_devices=0x7f080003;
+        public static final int rms_chart=0x7f08000e;
         public static final int secure_connect_scan=0x7f08000c;
         public static final int title_left_text=0x7f080000;
         public static final int title_new_devices=0x7f080004;

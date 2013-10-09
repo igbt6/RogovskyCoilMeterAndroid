@@ -29,8 +29,19 @@
         <activity
             android:name="com.inz.rogovskycurrentmeter.BtDeviceListActivity"
             android:configChanges="orientation|keyboardHidden"
-            android:label="@string/select_device"
-            android:theme="@android:style/Theme.Holo.Dialog" />
+            android:label="@string/select_device"  />
+        <activity android:name="com.inz.rogovskycurrentmeter.chart.ChartDemo"  />
+       
+      
+        
+             <activity android:name="com.inz.rogovskycurrentmeter.chart.XYChartBuilder" />
+        <activity android:name="com.inz.rogovskycurrentmeter.chart.PieChartBuilder" />
+        <activity android:name="org.achartengine.GraphicalActivity" />
+        <activity android:name="com.inz.rogovskycurrentmeter.GeneratedChartDemo" />
+           <!-- android:theme="@android:style/Theme.Holo.Dialog" --> 
+         
+        
+        
     </application>
 
 </manifest>

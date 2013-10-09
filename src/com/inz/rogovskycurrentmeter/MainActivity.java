@@ -3,6 +3,11 @@ package com.inz.rogovskycurrentmeter;
 import java.util.HashMap;
 import java.util.UUID;
 
+
+
+
+import com.inz.rogovskycurrentmeter.chart.ChartDemo;
+
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
@@ -51,7 +56,7 @@ public class MainActivity extends Activity {
 
 	// Intent request codes
 	private static final int REQUEST_CONNECT_DEVICE_SECURE = 1;
-	private static final int REQUEST_CONNECT_DEVICE_INSECURE = 2;
+
 	private static final int REQUEST_ENABLE_BT = 3;
 	
 	  // Layout Views
@@ -69,11 +74,6 @@ public class MainActivity extends Activity {
 	private BluetoothAdapter mBluetoothAdapter=null;
     // Member object for the chat services
     private BtService mChatService = null;
-	
-
-	// na potrzeby odtwarzania dzwieku
-	private MediaPlayer player;
-	private HashMap<String, BluetoothDevice> discoveredDevices = new HashMap<String, BluetoothDevice>();
 	private AlertDialogManager alertBuilder;
 
 	@Override
@@ -134,7 +134,7 @@ public class MainActivity extends Activity {
 	        mConversationView.setAdapter(mConversationArrayAdapter);
 
 	        // Initialize the compose field with a listener for the return key
-	        mOutEditText = (EditText) findViewById(R.id.edit_text_out);
+	        mOutEditText = (EditText) findViewById(R.id.edit_text_out); // tutaj bede wysylal komendy do miernika
 	        mOutEditText.setOnEditorActionListener(mWriteListener);
 
 	        // Initialize the send button with a listener that for click events
@@ -320,7 +320,7 @@ public class MainActivity extends Activity {
         // Get the BluetoothDevice object
         BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
         // Attempt to connect to the device
-        mChatService.connect(device, secure);
+        mChatService.connect(device);
     }
 	
 	
@@ -349,6 +349,7 @@ public class MainActivity extends Activity {
 
 	}
 */
+    
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
@@ -369,7 +370,15 @@ public class MainActivity extends Activity {
 			// Ensure this device is discoverable by others
 			ensureDiscoverable();
 			return true;
-		}
+			
+		case R.id.rms_chart:
+			 serverIntent = new Intent(this, ChartDemo.class);
+			    startActivity( serverIntent);
+	    }
+	
+			
+			
+		
 		return false;
 	}
 
