@@ -1,6 +1,7 @@
 package com.inz.rogovskycurrentmeter;
 
 import java.util.Set;
+
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -17,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -29,6 +31,7 @@ public class BtDeviceListActivity extends Activity {
     public static String EXTRA_DEVICE_ADDRESS = "device_address";
 
     // Member fields
+    private ProgressBar mProgress;
     private BluetoothAdapter mBtAdapter;
     private ArrayAdapter<String> mPairedDevicesArrayAdapter;
     private ArrayAdapter<String> mNewDevicesArrayAdapter;
@@ -40,7 +43,7 @@ public class BtDeviceListActivity extends Activity {
         // Setup the window
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.device_list);
-
+        
         // Set result CANCELED in case the user backs out
         setResult(Activity.RESULT_CANCELED);
 
@@ -48,6 +51,7 @@ public class BtDeviceListActivity extends Activity {
         Button scanButton = (Button) findViewById(R.id.button_scan);
         scanButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
+            	mProgress = (ProgressBar) findViewById(R.id.progress_bar_searching);
                 doDiscovery();
                 v.setVisibility(View.GONE);
             }
@@ -80,21 +84,22 @@ public class BtDeviceListActivity extends Activity {
         mBtAdapter = BluetoothAdapter.getDefaultAdapter();
 
         // Get a set of currently paired devices
-       // Set<BluetoothDevice> pairedDevices = mBtAdapter.getBondedDevices();
+      Set<BluetoothDevice> pairedDevices = mBtAdapter.getBondedDevices();
 
         // If there are paired devices, add each one to the ArrayAdapter
-        /*
+    
         if (pairedDevices.size() > 0) {
             findViewById(R.id.title_paired_devices).setVisibility(View.VISIBLE);
             for (BluetoothDevice device : pairedDevices) {
                 mPairedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
             }
             
-            */
-      //  } else {
+            
+      } else {
             String noDevices = getResources().getText(R.string.none_paired).toString();
             mPairedDevicesArrayAdapter.add(noDevices);
-       // }
+      }
+      
     }
 
     @Override
@@ -112,13 +117,7 @@ public class BtDeviceListActivity extends Activity {
     
     
     
-    private void clearListPairedDevices(){
-    	
-    	
-    	
-    	
-    	
-    }
+
 
     /**
      * Start device discover with the BluetoothAdapter
@@ -127,7 +126,8 @@ public class BtDeviceListActivity extends Activity {
         if (D) Log.d(TAG, "doDiscovery()");
 
         // Indicate scanning in the title
-        setProgressBarIndeterminateVisibility(true);
+       // setProgressBarIndeterminateVisibility(true);
+   mProgress.setVisibility(View.VISIBLE);
         setTitle(R.string.scanning);
 
         // Turn on sub-title for new devices
@@ -180,8 +180,9 @@ public class BtDeviceListActivity extends Activity {
                 }
             // When discovery is finished, change the Activity title
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
-                setProgressBarIndeterminateVisibility(false);
-                setTitle(R.string.select_device);
+                //setProgressBarIndeterminateVisibility(false);
+            	  mProgress.setVisibility(View.GONE);
+            	setTitle(R.string.select_device);
                 if (mNewDevicesArrayAdapter.getCount() == 0) {
                     String noDevices = getResources().getText(R.string.none_found).toString();
                     mNewDevicesArrayAdapter.add(noDevices);

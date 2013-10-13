@@ -29,17 +29,18 @@ public final class R {
         public static final int loupe=0x7f020005;
     }
     public static final class id {
-        public static final int Connect=0x7f08000b;
-        public static final int SearchForDevices=0x7f08000a;
+        public static final int Connect=0x7f08000c;
+        public static final int SearchForDevices=0x7f08000b;
         public static final int button_scan=0x7f080006;
-        public static final int button_send=0x7f080009;
-        public static final int discoverable=0x7f08000d;
-        public static final int edit_text_out=0x7f080008;
-        public static final int in=0x7f080007;
+        public static final int button_send=0x7f08000a;
+        public static final int discoverable=0x7f08000e;
+        public static final int edit_text_out=0x7f080009;
+        public static final int in=0x7f080008;
         public static final int new_devices=0x7f080005;
         public static final int paired_devices=0x7f080003;
-        public static final int rms_chart=0x7f08000e;
-        public static final int secure_connect_scan=0x7f08000c;
+        public static final int progress_bar_searching=0x7f080007;
+        public static final int rms_chart=0x7f08000f;
+        public static final int secure_connect_scan=0x7f08000d;
         public static final int title_left_text=0x7f080000;
         public static final int title_new_devices=0x7f080004;
         public static final int title_paired_devices=0x7f080002;

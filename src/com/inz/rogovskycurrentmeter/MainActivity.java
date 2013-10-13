@@ -51,14 +51,12 @@ public class MainActivity extends Activity {
     public static final String DEVICE_NAME = "device_name";
     public static final String TOAST = "toast";
 
-	
-	
-
-	// Intent request codes
+		// Intent request codes
 	private static final int REQUEST_CONNECT_DEVICE_SECURE = 1;
 
 	private static final int REQUEST_ENABLE_BT = 3;
 	
+	private final String[] CURRENT_METER_NAME={"CMETER1"}; // used to search proper device
 	  // Layout Views
     private ListView mConversationView;
     private EditText mOutEditText;
@@ -296,7 +294,7 @@ public class MainActivity extends Activity {
         case REQUEST_CONNECT_DEVICE_SECURE:
             // When DeviceListActivity returns with a device to connect
             if (resultCode == Activity.RESULT_OK) {
-                connectDevice(data, true);
+                connectDevice(data, true);           // to wstawic do onCreate
             }
             break;
           case REQUEST_ENABLE_BT:
