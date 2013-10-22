@@ -1,14 +1,10 @@
 package com.inz.rogovskycurrentmeter;
 
-import java.util.HashMap;
-import java.util.UUID;
 
 
 
 
 import com.inz.rogovskycurrentmeter.chart.ChartDemo;
-
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -56,7 +52,6 @@ public class MainActivity extends Activity {
 
 	private static final int REQUEST_ENABLE_BT = 3;
 	
-	private final String[] CURRENT_METER_NAME={"CMETER1"}; // used to search proper device
 	  // Layout Views
     private ListView mConversationView;
     private EditText mOutEditText;
@@ -263,7 +258,6 @@ public class MainActivity extends Activity {
                 byte[] writeBuf = (byte[]) msg.obj;
                 // construct a string from the buffer
                 String writeMessage = new String(writeBuf);
-                
                 mConversationArrayAdapter.add("Me:  " + writeMessage);
                 break;
             case MESSAGE_READ:
@@ -294,14 +288,18 @@ public class MainActivity extends Activity {
         case REQUEST_CONNECT_DEVICE_SECURE:
             // When DeviceListActivity returns with a device to connect
             if (resultCode == Activity.RESULT_OK) {
-                connectDevice(data, true);           // to wstawic do onCreate
+                connectDevice(data, true);           //TODO do onCreate
             }
             break;
           case REQUEST_ENABLE_BT:
             // When the request to enable Bluetooth returns
             if (resultCode == Activity.RESULT_OK) {
                 // Bluetooth is now enabled, so set up a chat session
-                setupChat();
+            	// and then search new devices immediately 
+            	Intent searchIntent  = null;
+            	searchIntent = new Intent(this, BtDeviceListActivity.class);
+    			startActivityForResult(searchIntent, REQUEST_CONNECT_DEVICE_SECURE);
+              //  setupChat();
             } else {
                 // User did not enable Bluetooth or an error occurred
                 Log.d(TAG, "BT not enabled");

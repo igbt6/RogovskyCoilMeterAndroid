@@ -8,6 +8,11 @@
 package com.inz.rogovskycurrentmeter;
 
 public final class R {
+    public static final class array {
+        /**  Here are names of our devices// add if you need more  
+         */
+        public static final int AVAILABLE_DEVICES=0x7f060000;
+    }
     public static final class attr {
     }
     public static final class dimen {
@@ -29,22 +34,22 @@ public final class R {
         public static final int loupe=0x7f020005;
     }
     public static final class id {
-        public static final int Connect=0x7f08000c;
-        public static final int SearchForDevices=0x7f08000b;
-        public static final int button_scan=0x7f080006;
-        public static final int button_send=0x7f08000a;
-        public static final int discoverable=0x7f08000e;
-        public static final int edit_text_out=0x7f080009;
-        public static final int in=0x7f080008;
-        public static final int new_devices=0x7f080005;
-        public static final int paired_devices=0x7f080003;
-        public static final int progress_bar_searching=0x7f080007;
-        public static final int rms_chart=0x7f08000f;
-        public static final int secure_connect_scan=0x7f08000d;
-        public static final int title_left_text=0x7f080000;
-        public static final int title_new_devices=0x7f080004;
-        public static final int title_paired_devices=0x7f080002;
-        public static final int title_right_text=0x7f080001;
+        public static final int Connect=0x7f09000c;
+        public static final int SearchForDevices=0x7f09000b;
+        public static final int button_scan=0x7f090006;
+        public static final int button_send=0x7f09000a;
+        public static final int discoverable=0x7f09000e;
+        public static final int edit_text_out=0x7f090009;
+        public static final int in=0x7f090008;
+        public static final int new_devices=0x7f090005;
+        public static final int paired_devices=0x7f090003;
+        public static final int progress_bar_searching=0x7f090007;
+        public static final int rms_chart=0x7f09000f;
+        public static final int secure_connect_scan=0x7f09000d;
+        public static final int title_left_text=0x7f090000;
+        public static final int title_new_devices=0x7f090004;
+        public static final int title_paired_devices=0x7f090002;
+        public static final int title_right_text=0x7f090001;
     }
     public static final class layout {
         public static final int custom_title=0x7f030000;
@@ -55,7 +60,7 @@ public final class R {
         public static final int start_layout=0x7f030005;
     }
     public static final class menu {
-        public static final int option_menu=0x7f070000;
+        public static final int option_menu=0x7f080000;
     }
     public static final class string {
         public static final int action_settings=0x7f050010;
@@ -109,10 +114,10 @@ public final class R {
     
  API 14 theme customizations can go here. 
          */
-        public static final int AppBaseTheme=0x7f060000;
+        public static final int AppBaseTheme=0x7f070000;
         /**  Application theme. 
  All customizations that are NOT specific to a particular API-level can go here. 
          */
-        public static final int AppTheme=0x7f060001;
+        public static final int AppTheme=0x7f070001;
     }
 }
