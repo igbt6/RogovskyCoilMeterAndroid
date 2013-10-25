@@ -48,8 +48,8 @@ public class MainActivity extends Activity {
     public static final String TOAST = "toast";
 
 		// Intent request codes
-	private static final int REQUEST_CONNECT_DEVICE_SECURE = 1;
-
+	private static final int REQUEST_CONNECT_DEVICE = 1;
+	private static final int REQUEST_EXIT_APLICATION =2;
 	private static final int REQUEST_ENABLE_BT = 3;
 	
 	  // Layout Views
@@ -96,7 +96,7 @@ public class MainActivity extends Activity {
 			startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
 		}
 		 else {
-	            if (mChatService == null) setupChat();
+///	            if (mChatService == null) setupChat();
 	        }
 	}
 
@@ -117,7 +117,7 @@ public class MainActivity extends Activity {
 	        }
 	    }
 	 
-	 
+	/* 
 	 private void setupChat() {
 	        Log.d(TAG, "setupChat()");
 
@@ -147,7 +147,7 @@ public class MainActivity extends Activity {
 	        // Initialize the buffer for outgoing messages
 	        mOutStringBuffer = new StringBuffer("");
 	    }
-	
+	*/
 	
 	@Override
 	public synchronized void onPause() {
@@ -285,10 +285,10 @@ public class MainActivity extends Activity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(D) Log.d(TAG, "onActivityResult " + resultCode);
         switch (requestCode) {
-        case REQUEST_CONNECT_DEVICE_SECURE:
+        case REQUEST_CONNECT_DEVICE:
             // When DeviceListActivity returns with a device to connect
             if (resultCode == Activity.RESULT_OK) {
-                connectDevice(data, true);           //TODO do onCreate
+                connectDevice(data, true);           
             }
             break;
           case REQUEST_ENABLE_BT:
@@ -298,15 +298,16 @@ public class MainActivity extends Activity {
             	// and then search new devices immediately 
             	Intent searchIntent  = null;
             	searchIntent = new Intent(this, BtDeviceListActivity.class);
-    			startActivityForResult(searchIntent, REQUEST_CONNECT_DEVICE_SECURE);
-              //  setupChat();
+    			startActivityForResult(searchIntent, REQUEST_CONNECT_DEVICE);
+             
             } else {
                 // User did not enable Bluetooth or an error occurred
                 Log.d(TAG, "BT not enabled");
                 Toast.makeText(this, R.string.bt_not_enabled_leaving, Toast.LENGTH_SHORT).show();
                 finish();
             }
-        }
+            break;
+ }
     }
 
     private void connectDevice(Intent data, boolean secure) {
@@ -319,32 +320,7 @@ public class MainActivity extends Activity {
         mChatService.connect(device);
     }
 	
-	
-	/*
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
 
-		if (requestCode == REQUEST_ENABLE_BT && resultCode == RESULT_OK) {
-			BluetoothAdapter BT = BluetoothAdapter.getDefaultAdapter();
-			String address = BT.getAddress();
-			String name = BT.getName();
-			String toastText = getString(R.string.bt_enabled) + name + ":"
-					+ address;
-			Toast.makeText(MainActivity.this, toastText, Toast.LENGTH_LONG)
-					.show();
-
-		}
-
-		else {
-			Toast.makeText(MainActivity.this,
-					getString(R.string.bt_not_enabled), Toast.LENGTH_LONG)
-					.show();
-
-		}
-
-	}
-*/
     
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -360,7 +336,7 @@ public class MainActivity extends Activity {
 		case R.id.secure_connect_scan:
 			// Launch the DeviceListActivity to see devices and do scan
 			serverIntent = new Intent(this, BtDeviceListActivity.class);
-			startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_SECURE);
+			startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
 			return true;
 		case R.id.discoverable:
 			// Ensure this device is discoverable by others
@@ -368,8 +344,14 @@ public class MainActivity extends Activity {
 			return true;
 			
 		case R.id.rms_chart:
+			
 			 serverIntent = new Intent(this, ChartDemo.class);
 			    startActivity( serverIntent);
+		/*	 
+			alertBuilder = new AlertDialogManager(MainActivity.this);
+			alertBuilder.showAlertDialog(getString(R.string.error),
+					getString(R.string.no_bluetooth_device), 0);
+					*/
 	    }
 	
 			

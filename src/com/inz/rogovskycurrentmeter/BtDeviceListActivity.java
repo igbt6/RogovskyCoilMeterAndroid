@@ -8,235 +8,249 @@ import java.util.Map;
 import java.util.Set;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
-import android.view.View.OnClickListener;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
+
+import com.inz.rogovskycurrentmeter.AlertDialogManager;
 
 public class BtDeviceListActivity extends Activity {
-	   // Debugging
-    private static final String TAG = "DeviceListActivity";
-    private static final boolean D = true;
+	// Debugging
+	private static final String TAG = "DeviceListActivity";
+	private static final boolean D = true;
 
-    // Return Intent extra
-    public static String EXTRA_DEVICE_ADDRESS = "device_address";
+	// Return Intent extra
+	public static String EXTRA_DEVICE_ADDRESS = "device_address";
 
-    // Member fields
-    private ProgressBar mProgress;
-    private BluetoothAdapter mBtAdapter;
-    private ArrayAdapter<String> mPairedDevicesArrayAdapter;
-    private ArrayAdapter<String> mNewDevicesArrayAdapter;
-    private Map<String, String> btPairedDevices; 
-	 
+	// Member fields
+	private ProgressBar seekDevicesProgress;
+	private int seekDeviceProgressStatus = 0;
+	private BluetoothAdapter mBtAdapter;
+	private Map<String, String> btPairedDevices;
+	private Handler deviceHandler = new Handler();
+	
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 
-        // Setup the window
-      //  requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-        setContentView(R.layout.device_list);
-        
-        // Set result CANCELED in case the user backs out
-        setResult(Activity.RESULT_CANCELED);
+		// Setup the window
+		// requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		setContentView(R.layout.device_list);
 
-//        doDiscovery();
- //       mProgress = (ProgressBar) findViewById(R.id.progress_bar_searching);
-        btPairedDevices= new HashMap<String , String >() ;
+		// Set result CANCELED in case the user backs out
+		setResult(Activity.RESULT_CANCELED);
 
-        // Initialize the button to perform device discovery
-        /*
-        Button scanButton = (Button) findViewById(R.id.button_scan);
-        scanButton.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-            	mProgress = (ProgressBar) findViewById(R.id.progress_bar_searching);
-                doDiscovery();
-                v.setVisibility(View.GONE);
-            }
-        });
-*/
-        // Initialize array adapters. One for already paired devices and
-        // one for newly discovered devices
-        /*
-        mPairedDevicesArrayAdapter = new ArrayAdapter<String>(this, R.layout.device_name);
-        mNewDevicesArrayAdapter = new ArrayAdapter<String>(this, R.layout.device_name);
+		// doDiscovery();
+		// mProgress = (ProgressBar) findViewById(R.id.progress_bar_searching);
+		btPairedDevices = new HashMap<String, String>();
+		seekDevicesProgress = (ProgressBar) findViewById(R.id.progress_bar_searching);
 
-        // Find and set up the ListView for paired devices
-        ListView pairedListView = (ListView) findViewById(R.id.paired_devices);
-        pairedListView.setAdapter(mPairedDevicesArrayAdapter);
-        pairedListView.setOnItemClickListener(mDeviceClickListener);
+		// Register for broadcasts when a device is discovered
+		IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+		this.registerReceiver(mReceiver, filter); // registration of Broadcast
+													// Receiver / na dole
+													// obsluzone zdarzenie
 
-        // Find and set up the ListView for newly discovered devices
-        ListView newDevicesListView = (ListView) findViewById(R.id.new_devices);
-        newDevicesListView.setAdapter(mNewDevicesArrayAdapter);
-        newDevicesListView.setOnItemClickListener(mDeviceClickListener);
-*/
-        // Register for broadcasts when a device is discovered
-        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        this.registerReceiver(mReceiver, filter);  // registration of  Broadcast Receiver / na dole obsluzone zdarzenie 
+		// Register for broadcasts when discovery has finished
+		filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+		this.registerReceiver(mReceiver, filter);
 
-        // Register for broadcasts when discovery has finished
-        filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-        this.registerReceiver(mReceiver, filter);
+		// Get the local Bluetooth adapter
+		mBtAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        // Get the local Bluetooth adapter
-        mBtAdapter = BluetoothAdapter.getDefaultAdapter();
+		// Get a set of currently paired devices
+		/*
+		 * Set<BluetoothDevice> pairedDevices = mBtAdapter.getBondedDevices();
+		 * 
+		 * // If there are paired devices, add each one to the ArrayAdapter
+		 * 
+		 * if (pairedDevices.size() > 0) {
+		 * 
+		 * for (BluetoothDevice device : pairedDevices) {
+		 * 
+		 * btPairedDevices.put(device.getName(), device.getAddress());//
+		 * ///////////////////////////////////////// } }
+		 */
+		new Thread(new Runnable() { // moze sie przydac
+					@Override
+					public void run() {
+						while (seekDeviceProgressStatus < 100) {
+							try {
+								Thread.sleep(100);
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+							seekDeviceProgressStatus++;
+							deviceHandler.post(new Runnable() {
 
-        // Get a set of currently paired devices
-      Set<BluetoothDevice> pairedDevices = mBtAdapter.getBondedDevices();
+								@Override
+								public void run() {
+									seekDevicesProgress
+											.setProgress(seekDeviceProgressStatus);
+								}
+							});
 
-        // If there are paired devices, add each one to the ArrayAdapter
-    
-        if (pairedDevices.size() > 0) {
-           // findViewById(R.id.title_paired_devices).setVisibility(View.VISIBLE);
-            for (BluetoothDevice device : pairedDevices) {
-              //  mPairedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
-                btPairedDevices.put(device.getName() , device.getAddress());///////////////////////////////////////////
-            }
-            
-            
-      } else {
-            String noDevices = getResources().getText(R.string.none_paired).toString();
-           // mPairedDevicesArrayAdapter.add(noDevices);
-      }
-        doDiscovery();
-      
-    }
+						}
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
+					}
+				}).start();
 
-        // Make sure we're not doing discovery anymore
-        if (mBtAdapter != null) {
-            mBtAdapter.cancelDiscovery();
-        }
+		doDiscovery();
 
-        // Unregister broadcast listeners
-        this.unregisterReceiver(mReceiver);
-    }
-    
-    
-    
+	}
 
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
 
-    /**
-     * Start device discover with the BluetoothAdapter
-     */
-    private void doDiscovery() {
-        if (D) Log.d(TAG, "doDiscovery()");
+		// Make sure we're not doing discovery anymore
+		if (mBtAdapter != null) {
+			mBtAdapter.cancelDiscovery();
+		}
 
-        // Indicate scanning in the title
-       // setProgressBarIndeterminateVisibility(true);
-  // mProgress.setVisibility(View.VISIBLE);
-   //     setTitle(R.string.scanning);
+		// Unregister broadcast listeners
+		this.unregisterReceiver(mReceiver);
+	}
 
-        // Turn on sub-title for new devices
-       // findViewById(R.id.title_new_devices).setVisibility(View.VISIBLE);
+	/**
+	 * Start device discover with the BluetoothAdapter
+	 */
+	private void doDiscovery() {
+		seekDevicesProgress.setVisibility(View.VISIBLE);
+		if (D)
+			Log.d(TAG, "doDiscovery()");
+		// If we're already discovering, stop it
+		if (mBtAdapter.isDiscovering()) {
+			mBtAdapter.cancelDiscovery();
+		}
 
-        // If we're already discovering, stop it
-        if (mBtAdapter.isDiscovering()) {
-            mBtAdapter.cancelDiscovery();
-        }
+		// Request discover from BluetoothAdapter
+		mBtAdapter.startDiscovery();
 
-        // Request discover from BluetoothAdapter
-        mBtAdapter.startDiscovery();
-        
-    }
-/*
-    // The on-click listener for all devices in the ListViews
-    private OnItemClickListener mDeviceClickListener = new OnItemClickListener() {
-        public void onItemClick(AdapterView<?> av, View v, int arg2, long arg3) {
-            // Cancel discovery because it's costly and we're about to connect
-            mBtAdapter.cancelDiscovery();
+	}
+   private class WaitDialogThread implements Runnable{
+	   private int counter=0;
+	   @Override
+	   public void run(){
+		   while(counter<100){
+			   if (D) Log.d("THREADD", "waitThread");
+		   try{Thread.sleep(100);}
+		   catch(InterruptedException e) {
+				e.printStackTrace();
+			}
+		   counter++;
+		   }
+		   finish();  // after 10 sec , close application
+	}
+	}
+   
+   
+	private void searchForAvailableMeter() {
+		mBtAdapter.cancelDiscovery(); // Cancel discovery because it's costly
+										// and we're about to connect
+		String[] availableDevices = getResources().getStringArray(
+				R.array.AVAILABLE_DEVICES);
+		for (Map.Entry<String, String> entry : btPairedDevices.entrySet()) {
+			if (D)
+				Log.d(TAG, entry.getKey() + "\n");
+			for (String avDevice : availableDevices) {
+				if (D)
+					Log.d(TAG, "---->" + avDevice + "\n");
+				if ((entry.getKey()).equals(avDevice)) {
+					if (D)
+						Log.d(TAG, "DEVICE was fOUND!!!!!!!!");
+					// Create the result Intent and include the MAC address
+					Intent intent = new Intent();
+					intent.putExtra(EXTRA_DEVICE_ADDRESS, entry.getValue());
 
-            // Get the device MAC address, which is the last 17 chars in the View
-            String info = ((TextView) v).getText().toString();
-            String address = info.substring(info.length() - 17);
+					// Set result and finish this Activity
+					setResult(Activity.RESULT_OK, intent);
+					if (D)
+						Log.d(TAG, "BFR FINISH");
+					finish();
+					if (D)
+						Log.d(TAG, "AFTER FINISH");
+					return;
+				}
+			}
+		}
+		if (D)
+			Log.d(TAG, "NO DEVICE FOUND!!! ! !!!!!!!!!");
+		noDeviceAlertDialog();
+		
+	}
 
-            // Create the result Intent and include the MAC address
-            Intent intent = new Intent();
-            intent.putExtra(EXTRA_DEVICE_ADDRESS, address);
-
-            // Set result and finish this Activity
-            setResult(Activity.RESULT_OK, intent);
-            finish();
-        }
-    };
-*/
-    private void searchForAvailableMeter(){
-    	 mBtAdapter.cancelDiscovery(); // Cancel discovery because it's costly and we're about to connect
-    String[] availableDevices= getResources().getStringArray(R.array.AVAILABLE_DEVICES);
-    for(Map.Entry<String, String> entry: btPairedDevices.entrySet()){
-    	if (D) Log.d(TAG, entry.getKey()+"\n");
-    	for(String avDevice: availableDevices){
-    		if (D) Log.d(TAG, "---->"+avDevice+"\n");
-    		if((entry.getKey()).equals(avDevice)){
-    			if (D) Log.d(TAG, "DEVICE was fOUNDED!!!!!!!!");
-    			 // Create the result Intent and include the MAC address
-                Intent intent = new Intent();
-                intent.putExtra(EXTRA_DEVICE_ADDRESS, entry.getValue());
-
-                // Set result and finish this Activity
-                setResult(Activity.RESULT_OK, intent);
-                finish();
-    			
-    			
-    		}
-    	 }
-    	}
-    	
-	if (D) Log.d(TAG, "DEVICE NOT FOUND!!! ! !!!!!!!!!");
-    	
-    }
-    
-    // The BroadcastReceiver that listens for discovered devices and
-    // changes the title when discovery is finished
-    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-        	if (D) Log.d(TAG, "onRECEIVE!!!!!!!!! ! !!!!!!!!!");
-            // When discovery finds a device
-            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                // Get the BluetoothDevice object from the Intent
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                // If it's already paired, skip it, because it's been listed already
-                if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
-                  //  mNewDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
-                    btPairedDevices.put(device.getName() , device.getAddress());///////////////////////////////////////////
-                    
-                }
-                
-            // When discovery is finished, change the Activity title
-            } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
-                //setProgressBarIndeterminateVisibility(false);
-            	///  mProgress.setVisibility(View.GONE);
-            	setTitle(R.string.select_device);
-                if (btPairedDevices.isEmpty()/*mNewDevicesArrayAdapter.getCount() == 0*/) {
-                	if (D) Log.d(TAG, "HASH MAP IS EMPTY");
-                    //String noDevices = getResources().getText(R.string.none_found).toString();
-                	
-                  //  mNewDevicesArrayAdapter.add(noDevices);
-                	}
-                else searchForAvailableMeter();
-            }
-        }
-    };
+	private void noDeviceAlertDialog(){
+		//requestWindowFeature(Window.); //TODO wylaczyc scanning devices after all
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this
+				);
+		alertDialogBuilder.setTitle("NO DEVICES WAS FOUND").setMessage("Do you want to scan again or shall I close the application?")
+				.setCancelable(true).setInverseBackgroundForced(true);
+				alertDialogBuilder
+				.setIcon(R.drawable.ic_not_ok)
+				.setPositiveButton("SCAN",
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog,
+									int which) {
+								doDiscovery();
+								dialog.cancel();
+							}
+						})
+				.setNegativeButton("CLOSE",
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog,
+									int which) {
+								android.os.Process.killProcess(android.os.Process.myPid());
+								
+								
+							}
+						});
+				AlertDialog alertDialog = alertDialogBuilder.create();
+				alertDialog.show();
+				Thread waiter = new Thread(new WaitDialogThread()); // gdyby ktos nic nie wisnal to po 10 sek , wylaczenie
+				waiter.start();
+		}
+	
+	
+	private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			String action = intent.getAction();
+			if (D)
+				Log.d(TAG, "onRECEIVE!!!!!!!!! ! !!!!!!!!!");
+			// When discovery finds a device
+			if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+				// Get the BluetoothDevice object from the Intent
+				BluetoothDevice device = intent
+						.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+				
+				btPairedDevices.put(device.getName(), device.getAddress());
+				// When discovery is finished, change the Activity title
+			} else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED
+					.equals(action)) {
+				seekDevicesProgress.setVisibility(View.GONE);
+				setTitle(R.string.scanning);
+				if (btPairedDevices.isEmpty()) {
+					if (D)
+						Log.d(TAG, "HASH MAP IS EMPTY"); // TODO
+					    noDeviceAlertDialog();
+				    } else
+					searchForAvailableMeter();
+			}
+		}
+	};
 
 }
