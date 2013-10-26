@@ -45,4 +45,11 @@
     <item>CMETER2</item>  
     </string-array>
     
+     <string-array 
+        name="COMMANDS_TO_METER">
+    <item>xSTART</item>
+    <item>xSTOP</item>  
+    </string-array>
+    
+    
 </resources>

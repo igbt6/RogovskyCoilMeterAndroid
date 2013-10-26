@@ -12,6 +12,7 @@ public final class R {
         /**  Here are names of our devices// add if you need more  
          */
         public static final int AVAILABLE_DEVICES=0x7f060000;
+        public static final int COMMANDS_TO_METER=0x7f060001;
     }
     public static final class attr {
     }
@@ -34,12 +35,15 @@ public final class R {
         public static final int loupe=0x7f020005;
     }
     public static final class id {
-        public static final int Connect=0x7f090004;
-        public static final int SearchForDevices=0x7f090003;
-        public static final int discoverable=0x7f090006;
+        public static final int Connect=0x7f090007;
+        public static final int SearchForDevices=0x7f090006;
+        public static final int button1=0x7f090003;
+        public static final int discoverable=0x7f090009;
         public static final int progress_bar_searching=0x7f090002;
-        public static final int rms_chart=0x7f090007;
-        public static final int secure_connect_scan=0x7f090005;
+        public static final int rmsName=0x7f090004;
+        public static final int rmsValue=0x7f090005;
+        public static final int rms_chart=0x7f09000a;
+        public static final int secure_connect_scan=0x7f090008;
         public static final int title_left_text=0x7f090000;
         public static final int title_right_text=0x7f090001;
     }
@@ -48,7 +52,8 @@ public final class R {
         public static final int device_list=0x7f030001;
         public static final int main=0x7f030002;
         public static final int message=0x7f030003;
-        public static final int start_layout=0x7f030004;
+        public static final int results=0x7f030004;
+        public static final int start_layout=0x7f030005;
     }
     public static final class menu {
         public static final int option_menu=0x7f080000;

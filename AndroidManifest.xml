@@ -33,7 +33,8 @@
             android:theme="@android:style/Theme.Holo.Dialog" />
         <activity android:name="com.inz.rogovskycurrentmeter.chart.ChartDemo" 
             android:theme="@android:style/Theme.Holo.Dialog" />
-       
+        <activity android:name="com.inz.rogovskycurrentmeter.Results" 
+             />
 		<activity android:name="com.inz.rogovskycurrentmeter.chart.XYChartBuilder" />
         <activity android:name="com.inz.rogovskycurrentmeter.chart.PieChartBuilder" />
         <activity android:name="org.achartengine.GraphicalActivity" />

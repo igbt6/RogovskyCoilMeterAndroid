@@ -101,7 +101,7 @@ public class BtService {
 	    /**
 	     * Start the ConnectThread to initiate a connection to a remote device.
 	     * @param device  The BluetoothDevice to connect
-	     * @param secure Socket Security type - Secure (true) , Insecure (false)
+	  
 	     */
 	    public synchronized void connect(BluetoothDevice device) {
 	        if (D) Log.d(TAG, "connect to: " + device);
