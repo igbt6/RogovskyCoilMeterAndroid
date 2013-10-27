@@ -1,6 +1,6 @@
 package com.inz.rogovskycurrentmeter;
 
-import com.inz.rogovskycurrentmeter.chart.ChartDemo;
+
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -196,17 +196,6 @@ public class MainActivity extends Activity {
 			Log.e(TAG, "--- ON DESTROY ---");
 	}
 
-	private void ensureDiscoverable() {
-		if (D)
-			Log.d(TAG, "ensure discoverable");
-		if (mBluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
-			Intent discoverableIntent = new Intent(
-					BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-			discoverableIntent.putExtra(
-					BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
-			startActivity(discoverableIntent);
-		}
-	}
 
 	/**
 	 * Sends a message.
@@ -374,20 +363,8 @@ public class MainActivity extends Activity {
 			serverIntent = new Intent(this, BtDeviceListActivity.class);
 			startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
 			return true;
-		case R.id.discoverable:
-			// Ensure this device is discoverable by others
-			ensureDiscoverable();
-			return true;
-
-		case R.id.rms_chart:
-
-			serverIntent = new Intent(this, ChartDemo.class);
-			startActivity(serverIntent);
-			/*
-			 alertBuilder = new AlertDialogManager(MainActivity.this);
-			 alertBuilder.showAlertDialog(getString(R.string.error),
-			 getString(R.string.no_bluetooth_device), 0);
-			 */
+	
+			
 		}
 
 		return false;

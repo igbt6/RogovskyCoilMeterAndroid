@@ -20,4 +20,18 @@
         android:text=""
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
+    <Button
+        android:id="@+id/btnRmsChart"
+        android:layout_column="0"
+        android:layout_gravity="left|center_vertical"
+        android:layout_row="0"
+        android:text="RMS" />
+
+    <Button
+        android:id="@+id/btnFFTChart"
+        android:layout_column="0"
+        android:layout_gravity="right|center_vertical"
+        android:layout_row="0"
+        android:text="FFT" />
+
 </GridLayout>

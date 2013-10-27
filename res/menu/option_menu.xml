@@ -18,14 +18,6 @@
           android:icon="@android:drawable/ic_menu_search"
           android:title="@string/secure_connect"
           android:showAsAction="ifRoom|withText" />
-    <item android:id="@+id/discoverable"
-          android:icon="@android:drawable/ic_menu_mylocation"
-          android:title="@string/discoverable"
-          android:showAsAction="ifRoom|withText" />
-    
-    <item android:id="@+id/rms_chart"
-          android:icon="@android:drawable/btn_plus"
-          android:title="rmsChart"
-          android:showAsAction="ifRoom|withText" />
+
         
 </menu>
