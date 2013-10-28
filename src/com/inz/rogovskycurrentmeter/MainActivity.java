@@ -91,15 +91,21 @@ public class MainActivity extends Activity {
 		super.onStart();
 		// If BT is not on, request that it be enabled.
 		// setupChat() will then be called during onActivityResult
-		if (!mBluetoothAdapter.isEnabled()) {
+		if (!mBluetoothAdapter.isEnabled()) {        //TODO odkomentowac , WORKAROUND NA WSZYSTKIE ZWISY!!!!!!
 			Intent enableBtIntent = new Intent(
 					BluetoothAdapter.ACTION_REQUEST_ENABLE);
 			startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
 		} else {
-			if (mChatService == null)
-				mChatService = new BtService(MainActivity.this, mHandler);
+			if (mChatService == null){
+			//	Intent searchIntent = null;
+			//	searchIntent = new Intent(this, BtDeviceListActivity.class);
+			//	startActivityForResult(searchIntent, REQUEST_CONNECT_DEVICE);
+				
+				mChatService = new BtService(MainActivity.this, mHandler);}
 				setupMainMenu();
 		}
+		
+		//setupMainMenu();
 	}
 
 	@Override
@@ -115,6 +121,7 @@ public class MainActivity extends Activity {
 		if (mChatService != null) {
 			// Only if the state is STATE_NONE, do we know that we haven't
 			// started already
+			
 			if (mChatService.getState() == BtService.STATE_NONE) {
 				// Start the Bluetooth chat services
 				mChatService.start();
@@ -134,7 +141,7 @@ public class MainActivity extends Activity {
 				String[] message = getResources().getStringArray(
 						R.array.COMMANDS_TO_METER);
 				Log.i(TAG, "BEFORE COMMAND");
-				sendCommand("aaa");
+				sendCommand(message[0]);   //ODKOMENTOWAC 
 				Log.i(TAG, "AFTER COMMAND");
 				startActivity(measureResultsIntent);
 				//mChatService = new BtService(MainActivity.this, mHandler);

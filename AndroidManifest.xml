@@ -31,15 +31,11 @@
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/scanning" 
             android:theme="@android:style/Theme.Holo.Dialog" />
-        <activity android:name="com.inz.rogovskycurrentmeter.chart.ChartDemo" 
-            android:theme="@android:style/Theme.Holo.Dialog" />
+    
         <activity android:name="com.inz.rogovskycurrentmeter.Results" 
              />
-		<activity android:name="com.inz.rogovskycurrentmeter.chart.XYChartBuilder" />
-        <activity android:name="com.inz.rogovskycurrentmeter.chart.PieChartBuilder" />
-        <activity android:name="org.achartengine.GraphicalActivity" />
-        <activity android:name="com.inz.rogovskycurrentmeter.GeneratedChartDemo" 
-         android:theme="@android:style/Theme.Holo.Dialog"/>
+		<activity android:name="com.inz.rogovskycurrentmeter.chart.RMSTimeChart" />
+
            <!--  --> 
 		</application>
 

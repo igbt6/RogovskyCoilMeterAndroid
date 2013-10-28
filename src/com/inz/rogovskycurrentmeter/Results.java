@@ -2,6 +2,7 @@ package com.inz.rogovskycurrentmeter;
 
 import com.inz.rogovskycurrentmeter.chart.FFTChart;
 import com.inz.rogovskycurrentmeter.chart.RMSChart;
+import com.inz.rogovskycurrentmeter.chart.RMSTimeChart;
 
 import android.app.ActionBar;
 import android.app.Activity;
@@ -48,6 +49,8 @@ public class Results extends Activity {
 	private TextView rmsValue;
 	private Button rmsChart;
 	private Button fftChart;
+	
+	public static double rmsResult =0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -62,20 +65,20 @@ public class Results extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				Intent intent = null;
+				Intent chartIntent = null;
 				switch (v.getId()) {
 
 				case R.id.btnRmsChart:
-					RMSChart rmsChartBuilder = new RMSChart();
-					intent = rmsChartBuilder.execute(getApplicationContext());
+					//RMSChart rmsChartBuilder = new RMSChart();
+				//	intent = rmsChartBuilder.execute(getApplicationContext());
+					chartIntent = new Intent(Results.this, RMSTimeChart.class);
 
-					startActivity(intent);
+					startActivity(chartIntent);
 					break;
 				case R.id.btnFFTChart:
-
 					FFTChart fftChartBuilder = new FFTChart();
-					intent = fftChartBuilder.execute(getApplicationContext());
-					startActivity(intent);
+					chartIntent = fftChartBuilder.execute(getApplicationContext());
+					startActivity(chartIntent);
 					break;
 				}
 
@@ -85,16 +88,16 @@ public class Results extends Activity {
 		fftChart.setOnClickListener(buttonHandler);
 
 		rmsValue.setText("2.54[V]");
-		rmsValue.setText(MainActivity.readFullMessage);
+		rmsValue.setText(MainActivity.readFullMessage);     //TODO odkomentowac WORKAROUND NA ZWISYYYYYY!!!
 
 		// /rmsValue.setText(getIntent().getStringExtra("DATA"));
 		// mBtService = new BtService(Results.this, mHandler);
 		// MainActivity.mChatService=new BtService(Results.this, mHandler);
 		// Initialize the buffer for outgoing messages
 		mOutStringBuffer = new StringBuffer("");
-		sendCommand("KOCHAM SARE");
+		sendCommand("FUMIKO19");
 
-		new Thread(new Runnable() { // moze sie przydac
+		new Thread(new Runnable() {
 					@Override
 					public void run() {
 						while (true) {
@@ -109,6 +112,10 @@ public class Results extends Activity {
 								@Override
 								public void run() {
 									rmsValue.setText(MainActivity.readFullMessage);
+									if(MainActivity.readFullMessage!=null){
+									rmsResult=Double.parseDouble(MainActivity.readFullMessage); // her I send to RMS Chart // RMSTimeChart Activity
+									}if (D)
+										Log.i(TAG, Double.toString(rmsResult));
 								}
 							});
 
@@ -116,6 +123,10 @@ public class Results extends Activity {
 
 					}
 				}).start();
+		
+		
+		
+		
 
 	}
 

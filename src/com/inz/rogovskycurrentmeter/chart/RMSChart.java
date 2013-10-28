@@ -17,6 +17,7 @@ package com.inz.rogovskycurrentmeter.chart;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.chart.PointStyle;
@@ -29,12 +30,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint.Align;
+import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.TextView;
 
 /**
  * Multiple temperature demo chart.
  */
-public class RMSChart extends AbstractDemoChart {
+public class RMSChart extends AbstractBuildChart {
   /**
    * Returns the chart name.
    * 
@@ -49,9 +52,7 @@ public class RMSChart extends AbstractDemoChart {
    * 
    * @return the chart description
    */
-  public String getDesc() {
-    return " RMS Value chart ";
-  }
+
 
   /**
    * Executes the chart demo.
@@ -67,15 +68,15 @@ public class RMSChart extends AbstractDemoChart {
    // }
     List<double[]> values = new ArrayList<double[]>();
     values.add(new double[] {33.7, 33.6, 34.1,34.1, 34.0,33.8, 33.8,  33.8, 33.8, 33.7, 34.1, 33.7, 34.1, 34.0, 34.1, 33.7, 33.6, 34.1,34.1, 34.0,33.8, 33.8, 33.7,33.7, 33.5, 34.1,  34.1, 33.7,  34.4, 34.1, 34.0,34.1, 34.0,33.8, 33.8,  33.8, 33.8, 33.8, });
-    int[] colors = new int[] { Color.YELLOW, Color.YELLOW };
+    int[] colors = new int[] { Color.RED, Color.RED };
     PointStyle[] styles = new PointStyle[] { PointStyle.POINT, PointStyle.POINT };
-    XYMultipleSeriesRenderer renderer = new XYMultipleSeriesRenderer(2);
+    XYMultipleSeriesRenderer renderer = new XYMultipleSeriesRenderer(1);
     setRenderer(renderer, colors, styles);
     int length = renderer.getSeriesRendererCount();
-    for (int i = 0; i < length; i++) {
-      XYSeriesRenderer r = (XYSeriesRenderer) renderer.getSeriesRendererAt(i);
-      r.setLineWidth(5f);
-     }
+  //  for (int i = 0; i < length; i++) {
+  //    XYSeriesRenderer r = (XYSeriesRenderer) renderer.getSeriesRendererAt(i);
+  //    r.setLineWidth(5f);
+  //   }
     
     XYSeries serie = new XYSeries(null);
     serie.addAnnotation("CURRENT", 12, 31);
@@ -105,12 +106,15 @@ public class RMSChart extends AbstractDemoChart {
     renderer.setYLabelsAlign(Align.LEFT, 1);
 
     XYMultipleSeriesDataset dataset = buildDataset(titles, x, values);
-   // TextView txt = new TextView(Context context);
-    values.clear();
-    values.add(new double[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
-    addXYSeries(dataset, new String[] { "" }, x, values, 1);
-    Intent intent = ChartFactory.getCubicLineChartIntent(context, dataset, renderer, 0.6f,
+
+   // values.clear();
+  //  values.add(new double[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+  //  addXYSeries(dataset, new String[] { "" }, x, values, 1);
+    Intent intent = ChartFactory.getTimeChartIntent(context, dataset, renderer, "AA",
         "CurrentMeter_v1.0");
     return intent;
   }
+
+
+
 }

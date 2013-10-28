@@ -30,7 +30,7 @@ import android.graphics.Paint.Align;
 /**
  * Sales demo bar chart.
  */
-public class FFTChart extends AbstractDemoChart {
+public class FFTChart extends AbstractBuildChart {
   /**
    * Returns the chart name.
    * 
@@ -40,16 +40,7 @@ public class FFTChart extends AbstractDemoChart {
     return "FFT CHART";
   }
 
-  /**
-   * Returns the chart description.
-   * 
-   * @return the chart description
-   */
-  public String getDesc() {
-    return "FFT Spectrum chart";
-  }
-
-  /**
+ /**
    * Executes the chart demo.
    * 
    * @param context the context

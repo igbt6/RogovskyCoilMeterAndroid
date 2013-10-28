@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.inz.rogovskycurrentmeter;
+package com.inz.rogovskycurrentmeter.chart;
 
 import java.util.Date;
 import java.util.List;
 
 import org.achartengine.chart.PointStyle;
+import com.inz.rogovskycurrentmeter.chart.IChart;
 import org.achartengine.model.CategorySeries;
 import org.achartengine.model.MultipleCategorySeries;
 import org.achartengine.model.TimeSeries;
@@ -29,13 +30,11 @@ import org.achartengine.renderer.SimpleSeriesRenderer;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 
-import com.inz.rogovskycurrentmeter.chart.IDemoChart;
-
 /**
  * An abstract class for the demo charts to extend. It contains some methods for
  * building datasets and renderers.
  */
-public abstract class AbstractDemoChart implements IDemoChart {
+public abstract class AbstractBuildChart implements IChart {
 
   /**
    * Builds an XY multiple dataset using the provided values.
