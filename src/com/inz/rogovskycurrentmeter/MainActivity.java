@@ -4,14 +4,14 @@ package com.inz.rogovskycurrentmeter;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
-import android.database.CursorJoiner.Result;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -48,7 +48,7 @@ public class MainActivity extends Activity {
 	private static final int REQUEST_CONNECT_DEVICE = 1;
 	private static final int REQUEST_EXIT_APLICATION = 2;
 	private static final int REQUEST_ENABLE_BT = 3;
-
+	public static final String DATA_ACTION ="DATA_ACTION";
 	// Layout Views
 	private ListView mConversationView;
 	private EditText mOutEditText;
@@ -258,7 +258,7 @@ public class MainActivity extends Activity {
 	}
 
 	// The Handler that gets information back from the BluetoothChatService
-	private final Handler mHandler = new Handler() {
+	private Handler mHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
@@ -285,16 +285,22 @@ public class MainActivity extends Activity {
 				byte[] writeBuf = (byte[]) msg.obj;
 				// construct a string from the buffer
 				String writeMessage = new String(writeBuf);
-				/*mConversationArrayAdapter.add("Me:  " + writeMessage);*/
 				break;
 			case MESSAGE_READ:
 				byte[] readBuf = (byte[]) msg.obj;
 				// construct a string from the valid bytes in the buffer
 				String readMessage = new String(readBuf, 0, msg.arg1);
+				if (D)
+					Log.i(TAG, "READ_MESSAGE: "+readMessage);
 				readFullMessage=readMessage;
-				Intent i = new Intent(MainActivity.this,Results.class);
+				Intent i = new Intent(DATA_ACTION);
 				i.putExtra("DATA",readMessage);
-		///		startActivity(i);
+				sendBroadcast(i);        ///*************************************************HERE********/// here I send measured results to the other activities 
+				/*
+				  Intent i = new Intent(MainActivity.this,Results.class);
+				  i.putExtra("DATA",readMessage);
+				  startActivity(i);
+		        */
 				/*mConversationArrayAdapter.add(mConnectedDeviceName + ":  "
 						+ readMessage);*/
 				break;
@@ -313,7 +319,35 @@ public class MainActivity extends Activity {
 			}
 		}
 	};
-
+////////////////////////////////////////////////////////////////////////////////////////////	
+	private class dataService extends Service {
+		@Override
+	    public IBinder onBind(Intent arg0) {
+	        return null;
+	    }
+		
+		@Override
+		public void onCreate(){
+			super.onCreate();
+			  Toast.makeText(this,"Service created ...", 
+		                Toast.LENGTH_LONG).show();
+			  Intent intent = new Intent();
+			 /// intent
+		}
+			  
+			  
+	@Override
+		public void onDestroy() {
+			        super.onDestroy();
+			        Toast.makeText(this, "Service destroyed ...", 
+			                Toast.LENGTH_LONG).show();        
+			        }
+		}
+////////////////////////////////////////////////////////////////////////////////////////////
+	
+	
+///public class Broadcast
+////////////////////////////////////////////////////////////////////////////////////////////	
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (D)
 			Log.d(TAG, "onActivityResult " + resultCode);
@@ -376,5 +410,6 @@ public class MainActivity extends Activity {
 
 		return false;
 	}
+	
 
 }

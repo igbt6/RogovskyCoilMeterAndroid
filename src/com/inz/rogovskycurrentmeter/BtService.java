@@ -244,7 +244,7 @@ public class BtService {
 	            // Create a new listening server socket
 	            try {
 	               
-	                    tmp = mAdapter.listenUsingRfcommWithServiceRecord(NAME_SECURE,
+	                    tmp = mAdapter.listenUsingInsecureRfcommWithServiceRecord(NAME_SECURE,
 	                        MY_UUID_SECURE);
 	               
 	                
@@ -331,7 +331,7 @@ public class BtService {
 	            // given BluetoothDevice
 	            try {
 	               
-	                    tmp = device.createRfcommSocketToServiceRecord(
+	                    tmp = device.createInsecureRfcommSocketToServiceRecord(
 	                            MY_UUID_SECURE);
 	              
 	            } catch (IOException e) {
@@ -388,8 +388,8 @@ public class BtService {
 	     */
 	    private class ConnectedThread extends Thread {
 	        private final BluetoothSocket mmSocket;
-	        private final InputStream mmInStream;
-	        private final OutputStream mmOutStream;
+	        private  InputStream mmInStream;
+	        private  OutputStream mmOutStream;
 
 	        public ConnectedThread(BluetoothSocket socket, String socketType) {
 	            Log.d(TAG, "create ConnectedThread: " + socketType);
@@ -418,8 +418,12 @@ public class BtService {
 	            while (true) {
 	                try {
 	                    // Read from the InputStream
-	                    bytes = mmInStream.read(buffer);
-
+	               
+	                	bytes = mmInStream.read(buffer);
+	               
+	                    String bufferT = new String(buffer, 0, bytes);  /*************TO REMOVE*******************/
+	                    Log.d(TAG, "DATA RECEIVED BYTES: "+ String.valueOf(bytes));/*************TO REMOVE*******************/
+	                    Log.d(TAG, "DATA RECEIVED DATA: "+String.valueOf(bufferT));/*************TO REMOVE*******************/
 	                    // Send the obtained bytes to the UI Activity
 	                    mHandler.obtainMessage(MainActivity.MESSAGE_READ, bytes, -1, buffer)
 	                            .sendToTarget();

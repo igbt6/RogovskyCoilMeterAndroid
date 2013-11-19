@@ -37,6 +37,13 @@
 		<activity android:name="com.inz.rogovskycurrentmeter.chart.RMSTimeChart" />
 
            <!--  --> 
+           
+           <!--<receiver android:name ="com.inz.rogovskycurrentmeter.DataReceiver">
+               <intent-filter>
+                   <action android:name ="DATA_ACTION"/>
+               </intent-filter>
+           </receiver>
+           -->
 		</application>
 
 </manifest>

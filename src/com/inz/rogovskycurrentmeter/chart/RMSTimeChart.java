@@ -19,10 +19,16 @@ import org.achartengine.renderer.SimpleSeriesRenderer;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 
+import com.inz.rogovskycurrentmeter.MainActivity;
 import com.inz.rogovskycurrentmeter.R;
 import com.inz.rogovskycurrentmeter.Results;
+import com.inz.rogovskycurrentmeter.Results.MyDataReceiver;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.Paint.Align;
 import android.os.AsyncTask;
@@ -43,9 +49,13 @@ public class RMSTimeChart extends Activity {
 	private double xAxisMax;
 	private double yAxisMin;
 	private double yAxisMax;
+	private String rmsData;
 
 	// chart container
 	private LinearLayout layout;
+	
+	MyDataReceiver myData;
+	IntentFilter intentDataFilter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +64,9 @@ public class RMSTimeChart extends Activity {
 		setContentView(R.layout.rms_time_chart);
 
 		layout = (LinearLayout) findViewById(R.id.chart);
-
+		rmsData="0";
+		myData =new MyDataReceiver();   
+	    intentDataFilter = new IntentFilter(MainActivity.DATA_ACTION); //for broadcast receiver
 		double[] x = { 1, 50, 100, 150, 200, 250, 340, 360, 390, 410, 435, 500 };
 		Date dateValue = new Date();
 		// for (int i = 0; i < titles.length; i++) {
@@ -131,6 +143,21 @@ public class RMSTimeChart extends Activity {
 
 		layout.addView(mChartView);
 		new RMSChartTask().execute();
+	}
+	
+	
+	@Override
+	protected void onResume(){
+		super.onResume();
+		registerReceiver(myData, intentDataFilter);
+	}
+	
+
+	
+	@Override
+	protected void onDestroy(){
+		super.onResume();
+		unregisterReceiver(myData);
 	}
 
 	/*
@@ -278,8 +305,8 @@ public class RMSTimeChart extends Activity {
 
 			super.onProgressUpdate(values);
 			// addRealTimeXYSerie(mTimeSerie,Double.parseDouble(values[0]),Double.parseDouble(values[1]));
-			// Log.d("ASYNC_TASK" , "BFR_ADDED" );
-			double yValue = Results.rmsResult;// /Double.parseDouble(values[1]);
+			//Log.d("ASYNC_TASK" , "BFR_ADDED" );
+			double yValue = Double.parseDouble(rmsData);
 			double xValue = Double.parseDouble(values[0]);
 			mTimeSerie.add(xValue, yValue);
 			adjustAxisLengths(xValue,yValue);
@@ -289,4 +316,13 @@ public class RMSTimeChart extends Activity {
 
 	}
 
+	public class MyDataReceiver extends BroadcastReceiver {
+		@Override
+		public void onReceive(Context context , Intent i){
+			
+			rmsData= i.getStringExtra("DATA");
+	                      
+	        //abortBroadcast(); for sending ordererd broadcasts
+		}
+	}
 }

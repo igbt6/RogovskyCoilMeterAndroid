@@ -1,20 +1,19 @@
 package com.inz.rogovskycurrentmeter;
 
 import com.inz.rogovskycurrentmeter.chart.FFTChart;
-import com.inz.rogovskycurrentmeter.chart.RMSChart;
 import com.inz.rogovskycurrentmeter.chart.RMSTimeChart;
 
 import android.app.ActionBar;
 import android.app.Activity;
-import android.bluetooth.BluetoothAdapter;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,6 +33,8 @@ public class Results extends Activity {
 	public static final int MESSAGE_DEVICE_NAME = 4;
 	public static final int MESSAGE_TOAST = 5;
 
+	
+	
 	// Key names received from the BluetoothChatService Handler
 	public static final String DEVICE_NAME = "device_name";
 	public static final String TOAST = "toast";
@@ -44,20 +45,22 @@ public class Results extends Activity {
 	// String buffer for outgoing messages
 	private StringBuffer mOutStringBuffer;
 	private Handler rmsHandler = new Handler();
-	// private BtService mBtService = null;
-
+	
 	private TextView rmsValue;
 	private Button rmsChart;
 	private Button fftChart;
+	private String rmsData; // used in Broadcast receiver
 	
 	public static double rmsResult =0;
+	
+	MyDataReceiver myData;
+	IntentFilter intentDataFilter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.results);
 		rmsValue = (TextView) findViewById(R.id.rmsValue);
-
 		rmsChart = (Button) findViewById(R.id.btnRmsChart);
 		fftChart = (Button) findViewById(R.id.btnFFTChart);
 
@@ -86,7 +89,12 @@ public class Results extends Activity {
 		};
 		rmsChart.setOnClickListener(buttonHandler);
 		fftChart.setOnClickListener(buttonHandler);
-
+		rmsData="0";
+		myData =new MyDataReceiver();   
+        intentDataFilter = new IntentFilter(MainActivity.DATA_ACTION);
+	   
+	
+	
 		rmsValue.setText("2.54[V]");
 		rmsValue.setText(MainActivity.readFullMessage);     //TODO odkomentowac WORKAROUND NA ZWISYYYYYY!!!
 
@@ -111,11 +119,13 @@ public class Results extends Activity {
 
 								@Override
 								public void run() {
-									rmsValue.setText(MainActivity.readFullMessage);
+									rmsValue.setText(rmsData);
+									/*rmsValue.setText(MainActivity.readFullMessage);
 									if(MainActivity.readFullMessage!=null){
-									rmsResult=Double.parseDouble(MainActivity.readFullMessage); // her I send to RMS Chart // RMSTimeChart Activity
+									rmsResult=Double.parseDouble(MainActivity.readFullMessage); // here I send to RMS Chart // RMSTimeChart Activity
 									}if (D)
 										Log.i(TAG, Double.toString(rmsResult));
+										*/
 								}
 							});
 
@@ -123,13 +133,23 @@ public class Results extends Activity {
 
 					}
 				}).start();
-		
-		
-		
-		
-
 	}
+	
+	
+	@Override
+	protected void onResume(){
+		super.onResume();
+		registerReceiver(myData, intentDataFilter);
+	}
+	
 
+	
+	@Override
+	protected void onDestroy(){
+		super.onResume();
+		unregisterReceiver(myData);
+	}
+	
 	private void sendCommand(String message) {
 		// Check that we're actually connected before trying anything
 		if (MainActivity.mChatService.getState() != BtService.STATE_CONNECTED) {
@@ -143,61 +163,9 @@ public class Results extends Activity {
 			// Get the message bytes and tell the BluetoothChatService to write
 			byte[] send = message.getBytes();
 			MainActivity.mChatService.write(send);
-
-			// Reset out string buffer to zero and clear the edit text field
-			// /mOutStringBuffer.setLength(0);
-			// /mOutEditText.setText(mOutStringBuffer);
 		}
 	}
 
-	// The Handler that gets information back from the BluetoothChatService
-	private final Handler mHandler = new Handler() {
-		@Override
-		public void handleMessage(Message msg) {
-			switch (msg.what) {
-			case MESSAGE_STATE_CHANGE:
-				if (D)
-					Log.i(TAG, "MESSAGE_STATE_CHANGE: " + msg.arg1);
-				switch (msg.arg1) {
-				case BtService.STATE_CONNECTED:
-
-					break;
-				case BtService.STATE_CONNECTING:
-					setStatus(R.string.title_connecting);
-					break;
-				case BtService.STATE_LISTEN:
-				case BtService.STATE_NONE:
-					setStatus(R.string.title_not_connected);
-					break;
-				}
-				break;
-			case MESSAGE_WRITE:
-				byte[] writeBuf = (byte[]) msg.obj;
-				// construct a string from the buffer
-				String writeMessage = new String(writeBuf);
-				// /mConversationArrayAdapter.add("Me:  " + writeMessage);
-				break;
-			case MESSAGE_READ:
-				byte[] readBuf = (byte[]) msg.obj;
-				// construct a string from the valid bytes in the buffer
-				String readMessage = new String(readBuf, 0, msg.arg1);
-				rmsValue.setText(mConnectedDeviceName + ":  " + readMessage);
-				break;
-			case MESSAGE_DEVICE_NAME:
-				// save the connected device's name
-				mConnectedDeviceName = msg.getData().getString(DEVICE_NAME);
-				Toast.makeText(getApplicationContext(),
-						"Connected to " + mConnectedDeviceName,
-						Toast.LENGTH_SHORT).show();
-				break;
-			case MESSAGE_TOAST:
-				Toast.makeText(getApplicationContext(),
-						msg.getData().getString(TOAST), Toast.LENGTH_SHORT)
-						.show();
-				break;
-			}
-		}
-	};
 
 	private final void setStatus(int resId) {
 		final ActionBar actionBar = getActionBar();
@@ -209,5 +177,16 @@ public class Results extends Activity {
 		final ActionBar actionBar = getActionBar();
 		actionBar.setSubtitle(subTitle);
 	}
+	
+	public class MyDataReceiver extends BroadcastReceiver {
+		@Override
+		public void onReceive(Context context , Intent i){
+			
+			rmsData= i.getStringExtra("DATA");
+	                      
+	        //abortBroadcast();
+		}
+	}
+	
 
 }

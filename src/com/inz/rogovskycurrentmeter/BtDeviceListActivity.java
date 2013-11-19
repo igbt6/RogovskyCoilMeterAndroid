@@ -169,7 +169,7 @@ public class BtDeviceListActivity extends Activity {
 			for (String avDevice : availableDevices) {
 				if (D)
 					Log.d(TAG, "---->" + avDevice + "\n");
-				if ((entry.getKey()).equals(avDevice)) {
+				if ((entry.getKey()).equals(avDevice)) {  // TODO   wydupczyl sie tu  pies wie czemu 
 					if (D)
 						Log.d(TAG, "DEVICE was fOUND!!!!!!!!");
 					// Create the result Intent and include the MAC address
