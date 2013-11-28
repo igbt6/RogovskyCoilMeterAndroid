@@ -35,7 +35,7 @@ public class Results extends Activity {
 
 	
 	
-	// Key names received from the BluetoothChatService Handler
+	// Key names received from the BluetoothService Handler
 	public static final String DEVICE_NAME = "device_name";
 	public static final String TOAST = "toast";
 
@@ -110,7 +110,7 @@ public class Results extends Activity {
 					public void run() {
 						while (true) {
 							try {
-								Thread.sleep(1000);
+								Thread.sleep(10);
 							} catch (InterruptedException e) {
 								e.printStackTrace();
 							}
@@ -160,7 +160,7 @@ public class Results extends Activity {
 
 		// Check that there's actually something to send
 		if (message.length() > 0) {
-			// Get the message bytes and tell the BluetoothChatService to write
+			// Get the message bytes and tell the BluetoothService to write
 			byte[] send = message.getBytes();
 			MainActivity.mChatService.write(send);
 		}

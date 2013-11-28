@@ -30,7 +30,7 @@ import android.widget.Toast;
 public class MainActivity extends Activity {
 
 	// For Debugging
-	private static final String TAG = "BluetoothChat";
+	private static final String TAG = "MAINCurrentMeter";
 	private static final boolean D = true;
 
 	// Message types sent from the BluetoothChatService Handler
@@ -287,14 +287,21 @@ public class MainActivity extends Activity {
 				String writeMessage = new String(writeBuf);
 				break;
 			case MESSAGE_READ:
-				byte[] readBuf = (byte[]) msg.obj;
+				//////////////////////////////////////////////byte[] readBuf = (byte[]) msg.obj;
 				// construct a string from the valid bytes in the buffer
-				String readMessage = new String(readBuf, 0, msg.arg1);
+					//////////////////////////////////////////////String readMessage = new String(readBuf, 0, msg.arg1);
+					//////////////////////////////////////////////
+				String readBuf = (String) msg.obj;
+				String readMessageToSend=new String();
+			    for(int i =3;i<8;i++){
+			    	
+			    	readMessageToSend+=readBuf.charAt(i);
+			    }
 				if (D)
-					Log.i(TAG, "READ_MESSAGE: "+readMessage);
-				readFullMessage=readMessage;
+					Log.i(TAG, "READ_MESSAGE: "+readMessageToSend);
+				readFullMessage=readMessageToSend;
 				Intent i = new Intent(DATA_ACTION);
-				i.putExtra("DATA",readMessage);
+				i.putExtra("DATA",readMessageToSend);
 				sendBroadcast(i);        ///*************************************************HERE********/// here I send measured results to the other activities 
 				/*
 				  Intent i = new Intent(MainActivity.this,Results.class);

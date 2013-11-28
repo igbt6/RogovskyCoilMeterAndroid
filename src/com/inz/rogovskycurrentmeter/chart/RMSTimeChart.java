@@ -150,6 +150,7 @@ public class RMSTimeChart extends Activity {
 	protected void onResume(){
 		super.onResume();
 		registerReceiver(myData, intentDataFilter);
+		new RMSChartTask().execute();
 	}
 	
 
@@ -289,7 +290,7 @@ public class RMSTimeChart extends Activity {
 					// /values[1]=Double.toString(Current);
 
 					publishProgress(values);
-					Thread.sleep(20);
+					Thread.sleep(100);
 					i++;
 				}// while (i < 500);
 			} catch (Exception e) {
