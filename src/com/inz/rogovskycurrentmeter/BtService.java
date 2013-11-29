@@ -510,12 +510,12 @@ public class BtService {
 
 								Log.d(TAG,
 										"DATA RECEIVED DATA: " + ch.toString());
-								if (bytesCounter == 10) {
-									bytesCounter = 0;
-								}
+								///if (bytesCounter == 10) {
+								///	bytesCounter = 0;
+								///}
 								msg +=ch ;
 								bytesCounter++;
-							} while ((ch =(char) mmInStream.read()) != 120);
+							} while ((ch =(char) mmInStream.read()) != 120&&bytesCounter<8);
 							
 							String copyBuffer  = msg;
 							mHandler.obtainMessage(MainActivity.MESSAGE_READ,
@@ -591,25 +591,6 @@ public class BtService {
 			} catch (IOException e) {
 				Log.e(TAG, "close() of connect socket failed", e);
 			}
-		}
-
-		private Boolean parseMessageFromStream(byte[] data) {
-
-			String TempString = new String(data, 0, 10);
-
-			if ((TempString.charAt(9) == 'r')
-					&& (TempString.regionMatches(0, "rms", 0, 3)))/*
-																 * &&(TempString.
-																 * regionMatches
-																 * (9, "avg", 0,
-																 * 3)))
-																 */
-			{
-				return true;
-
-			} else
-				return false;
-
 		}
 	}
 }

@@ -49,7 +49,34 @@ public class Results extends Activity {
 	private TextView rmsValue;
 	private Button rmsChart;
 	private Button fftChart;
-	private String rmsData; // used in Broadcast receiver
+	
+	private class DataResults{	private String rmsData; // used in Broadcast receiver
+	
+	public DataResults() {
+		this.setRmsData("0");
+		this.setAvgData("0");
+		this.setMinData("0");  
+		this.setMaxData("0");
+	}
+	private String avgData; // used in Broadcast receiver
+	private String maxData; // used in Broadcast receiver
+	private String minData; // used in Broadcast receiver
+	private String fftData; // used in Broadcast receiver
+	 //setters getters  TODO for FFT
+	public void setRmsData(String rmsData){this.rmsData=rmsData;}
+	public void  setAvgData(String avgData){this.avgData=avgData;}
+	public void setMinData(String minData){this.minData=minData;}
+	public void setMaxData(String maxData){this.maxData=maxData;}
+	
+	public String getRmsData(){return rmsData;}
+	public String getAvgData(){return avgData;}
+	public String getMinData(){return minData;}
+	public String getMaxData(){return maxData;}
+	
+	
+};
+	
+DataResults allDataResults = new DataResults();
 	
 	public static double rmsResult =0;
 	
@@ -63,7 +90,7 @@ public class Results extends Activity {
 		rmsValue = (TextView) findViewById(R.id.rmsValue);
 		rmsChart = (Button) findViewById(R.id.btnRmsChart);
 		fftChart = (Button) findViewById(R.id.btnFFTChart);
-
+       
 		View.OnClickListener buttonHandler = new View.OnClickListener() {
 
 			@Override
@@ -89,14 +116,15 @@ public class Results extends Activity {
 		};
 		rmsChart.setOnClickListener(buttonHandler);
 		fftChart.setOnClickListener(buttonHandler);
-		rmsData="0";
-		myData =new MyDataReceiver();   
+		
+		myData =new MyDataReceiver();    // new broadcast receiver for result data
         intentDataFilter = new IntentFilter(MainActivity.DATA_ACTION);
 	   
-	
-	
-		rmsValue.setText("2.54[V]");
-		rmsValue.setText(MainActivity.readFullMessage);     //TODO odkomentowac WORKAROUND NA ZWISYYYYYY!!!
+        rmsValue.setText(allDataResults.getRmsData());
+		avgValue.setText(allDataResults.getAvgData());
+		minValue.setText(allDataResults.getMinData());
+		maxValue.setText(allDataResults.getMaxData());
+		//rmsValue.setText(MainActivity.readFullMessage);     //TODO odkomentowac WORKAROUND NA ZWISYYYYYY!!!
 
 		// /rmsValue.setText(getIntent().getStringExtra("DATA"));
 		// mBtService = new BtService(Results.this, mHandler);
@@ -119,7 +147,10 @@ public class Results extends Activity {
 
 								@Override
 								public void run() {
-									rmsValue.setText(rmsData);
+									rmsValue.setText(allDataResults.getRmsData());
+									avgValue.setText(allDataResults.getAvgData());
+									minValue.setText(allDataResults.getMinData());
+									maxValue.setText(allDataResults.getMaxData());
 									/*rmsValue.setText(MainActivity.readFullMessage);
 									if(MainActivity.readFullMessage!=null){
 									rmsResult=Double.parseDouble(MainActivity.readFullMessage); // here I send to RMS Chart // RMSTimeChart Activity
@@ -181,9 +212,10 @@ public class Results extends Activity {
 	public class MyDataReceiver extends BroadcastReceiver {
 		@Override
 		public void onReceive(Context context , Intent i){
-			
-			rmsData= i.getStringExtra("DATA");
-	                      
+			allDataResults.setRmsData(i.getStringExtra("RMS"));
+			allDataResults.setAvgData(i.getStringExtra("AVG"));
+			allDataResults.setMinData(i.getStringExtra("MIN"));   
+			allDataResults.setMaxData(i.getStringExtra("MAX"));   
 	        //abortBroadcast();
 		}
 	}

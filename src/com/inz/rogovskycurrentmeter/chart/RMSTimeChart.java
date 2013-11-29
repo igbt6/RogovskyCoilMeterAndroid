@@ -56,6 +56,7 @@ public class RMSTimeChart extends Activity {
 	
 	MyDataReceiver myData;
 	IntentFilter intentDataFilter;
+	AsyncTask<Void, String, Void> receiverTask =new RMSChartTask() ;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -142,7 +143,7 @@ public class RMSTimeChart extends Activity {
 		// "hh:mm:ss");
 
 		layout.addView(mChartView);
-		new RMSChartTask().execute();
+		receiverTask.execute();
 	}
 	
 	
@@ -150,7 +151,8 @@ public class RMSTimeChart extends Activity {
 	protected void onResume(){
 		super.onResume();
 		registerReceiver(myData, intentDataFilter);
-		new RMSChartTask().execute();
+		
+		
 	}
 	
 
@@ -159,8 +161,8 @@ public class RMSTimeChart extends Activity {
 	protected void onDestroy(){
 		super.onResume();
 		unregisterReceiver(myData);
+		receiverTask.cancel(true);
 	}
-
 	/*
 	 * private void fillData() { long value = new Date().getTime() - 3 *
 	 * TimeChart.DAY; for (int i = 0; i < 100; i++) { time_series.add(new
@@ -284,13 +286,11 @@ public class RMSTimeChart extends Activity {
 				while(true){
 					String[] values = new String[2];
 					Random r = new Random();
-					// double Current =r.nextDouble()+r.nextInt(4)+30;
-
 					values[0] = Double.toString(i);
-					// /values[1]=Double.toString(Current);
-
+					//values[1]=rmsData;
+					values[1]=MainActivity.readFullMessage;
 					publishProgress(values);
-					Thread.sleep(100);
+					Thread.sleep(10);
 					i++;
 				}// while (i < 500);
 			} catch (Exception e) {
@@ -307,7 +307,7 @@ public class RMSTimeChart extends Activity {
 			super.onProgressUpdate(values);
 			// addRealTimeXYSerie(mTimeSerie,Double.parseDouble(values[0]),Double.parseDouble(values[1]));
 			//Log.d("ASYNC_TASK" , "BFR_ADDED" );
-			double yValue = Double.parseDouble(rmsData);
+			double yValue = Double.parseDouble(values[1]);
 			double xValue = Double.parseDouble(values[0]);
 			mTimeSerie.add(xValue, yValue);
 			adjustAxisLengths(xValue,yValue);

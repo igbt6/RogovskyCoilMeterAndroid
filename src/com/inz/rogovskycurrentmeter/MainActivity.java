@@ -1,7 +1,5 @@
 package com.inz.rogovskycurrentmeter;
 
-
-
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -48,7 +46,7 @@ public class MainActivity extends Activity {
 	private static final int REQUEST_CONNECT_DEVICE = 1;
 	private static final int REQUEST_EXIT_APLICATION = 2;
 	private static final int REQUEST_ENABLE_BT = 3;
-	public static final String DATA_ACTION ="DATA_ACTION";
+	public static final String DATA_ACTION = "DATA_ACTION";
 	// Layout Views
 	private ListView mConversationView;
 	private EditText mOutEditText;
@@ -63,12 +61,12 @@ public class MainActivity extends Activity {
 	// Local Bluetooth adapter
 	private BluetoothAdapter mBluetoothAdapter = null;
 	// Member object for the chat services
-	public static  BtService mChatService = null;
+	public static BtService mChatService = null;
 	private AlertDialogManager alertBuilder;
 
 	private Button mStartMeasureButton;
-	
-	public static String readFullMessage=null;
+
+	public static String readFullMessage = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -91,21 +89,23 @@ public class MainActivity extends Activity {
 		super.onStart();
 		// If BT is not on, request that it be enabled.
 		// setupChat() will then be called during onActivityResult
-		if (!mBluetoothAdapter.isEnabled()) {        //TODO odkomentowac , WORKAROUND NA WSZYSTKIE ZWISY!!!!!!
+		if (!mBluetoothAdapter.isEnabled()) { // TODO odkomentowac , WORKAROUND
+												// NA WSZYSTKIE ZWISY!!!!!!
 			Intent enableBtIntent = new Intent(
 					BluetoothAdapter.ACTION_REQUEST_ENABLE);
 			startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
 		} else {
-			if (mChatService == null){
-			//	Intent searchIntent = null;
-			//	searchIntent = new Intent(this, BtDeviceListActivity.class);
-			//	startActivityForResult(searchIntent, REQUEST_CONNECT_DEVICE);
-				
-				mChatService = new BtService(MainActivity.this, mHandler);}
-				setupMainMenu();
+			if (mChatService == null) {
+				// Intent searchIntent = null;
+				// searchIntent = new Intent(this, BtDeviceListActivity.class);
+				// startActivityForResult(searchIntent, REQUEST_CONNECT_DEVICE);
+
+				mChatService = new BtService(MainActivity.this, mHandler);
+			}
+			setupMainMenu();
 		}
-		
-		//setupMainMenu();
+
+		// setupMainMenu();
 	}
 
 	@Override
@@ -121,7 +121,7 @@ public class MainActivity extends Activity {
 		if (mChatService != null) {
 			// Only if the state is STATE_NONE, do we know that we haven't
 			// started already
-			
+
 			if (mChatService.getState() == BtService.STATE_NONE) {
 				// Start the Bluetooth chat services
 				mChatService.start();
@@ -129,7 +129,7 @@ public class MainActivity extends Activity {
 		}
 	}
 
-	private void setupMainMenu(){
+	private void setupMainMenu() {
 		mStartMeasureButton = (Button) findViewById(R.id.button1);
 		mStartMeasureButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
@@ -141,13 +141,13 @@ public class MainActivity extends Activity {
 				String[] message = getResources().getStringArray(
 						R.array.COMMANDS_TO_METER);
 				Log.i(TAG, "BEFORE COMMAND");
-				sendCommand(message[0]);   //ODKOMENTOWAC 
+				sendCommand(message[0]); // ODKOMENTOWAC
 				Log.i(TAG, "AFTER COMMAND");
 				startActivity(measureResultsIntent);
-				//mChatService = new BtService(MainActivity.this, mHandler);
+				// mChatService = new BtService(MainActivity.this, mHandler);
 
 				// Initialize the buffer for outgoing messages
-				//mOutStringBuffer = new StringBuffer("");
+				// mOutStringBuffer = new StringBuffer("");
 			}
 		});
 	}
@@ -203,10 +203,10 @@ public class MainActivity extends Activity {
 			Log.e(TAG, "--- ON DESTROY ---");
 	}
 
-
 	/**
 	 * Sends a message.
-		@param message
+	 * 
+	 * @param message
 	 *            A string of text to send.
 	 */
 	private void sendCommand(String message) {
@@ -224,8 +224,8 @@ public class MainActivity extends Activity {
 			mChatService.write(send);
 
 			// Reset out string buffer to zero and clear the edit text field
-			///mOutStringBuffer.setLength(0);
-			///mOutEditText.setText(mOutStringBuffer);
+			// /mOutStringBuffer.setLength(0);
+			// /mOutEditText.setText(mOutStringBuffer);
 		}
 	}
 
@@ -269,8 +269,8 @@ public class MainActivity extends Activity {
 				case BtService.STATE_CONNECTED:
 					setStatus(getString(R.string.title_connected_to,
 							mConnectedDeviceName));
-					
-				//	mConversationArrayAdapter.clear();
+
+					// mConversationArrayAdapter.clear();
 					break;
 				case BtService.STATE_CONNECTING:
 					setStatus(R.string.title_connecting);
@@ -286,30 +286,16 @@ public class MainActivity extends Activity {
 				// construct a string from the buffer
 				String writeMessage = new String(writeBuf);
 				break;
-			case MESSAGE_READ:
-				//////////////////////////////////////////////byte[] readBuf = (byte[]) msg.obj;
-				// construct a string from the valid bytes in the buffer
-					//////////////////////////////////////////////String readMessage = new String(readBuf, 0, msg.arg1);
-					//////////////////////////////////////////////
-				String readBuf = (String) msg.obj;
-				String readMessageToSend=new String();
-			    for(int i =3;i<8;i++){
-			    	
-			    	readMessageToSend+=readBuf.charAt(i);
-			    }
+			case MESSAGE_READ:  // odbieram dane tutaj 
+				
+				ReadResult receiver= new ReadResult();
+				receiver= parseMessageFromHandler((String) msg.obj) ;
 				if (D)
-					Log.i(TAG, "READ_MESSAGE: "+readMessageToSend);
-				readFullMessage=readMessageToSend;
+					Log.i(TAG, "READ_MESSAGE: " + receiver.valueFromData);
+				readFullMessage = receiver.valueFromData;
 				Intent i = new Intent(DATA_ACTION);
-				i.putExtra("DATA",readMessageToSend);
-				sendBroadcast(i);        ///*************************************************HERE********/// here I send measured results to the other activities 
-				/*
-				  Intent i = new Intent(MainActivity.this,Results.class);
-				  i.putExtra("DATA",readMessage);
-				  startActivity(i);
-		        */
-				/*mConversationArrayAdapter.add(mConnectedDeviceName + ":  "
-						+ readMessage);*/
+				i.putExtra(receiver.actionStringForBroadcastReceiver, receiver.valueFromData);
+				sendBroadcast(i); // wysylam Broadcasta
 				break;
 			case MESSAGE_DEVICE_NAME:
 				// save the connected device's name
@@ -326,35 +312,35 @@ public class MainActivity extends Activity {
 			}
 		}
 	};
-////////////////////////////////////////////////////////////////////////////////////////////	
+
+	// //////////////////////////////////////////////////////////////////////////////////////////
 	private class dataService extends Service {
 		@Override
-	    public IBinder onBind(Intent arg0) {
-	        return null;
-	    }
-		
+		public IBinder onBind(Intent arg0) {
+			return null;
+		}
+
 		@Override
-		public void onCreate(){
+		public void onCreate() {
 			super.onCreate();
-			  Toast.makeText(this,"Service created ...", 
-		                Toast.LENGTH_LONG).show();
-			  Intent intent = new Intent();
-			 /// intent
+			Toast.makeText(this, "Service created ...", Toast.LENGTH_LONG)
+					.show();
+			Intent intent = new Intent();
+			// / intent
 		}
-			  
-			  
-	@Override
+
+		@Override
 		public void onDestroy() {
-			        super.onDestroy();
-			        Toast.makeText(this, "Service destroyed ...", 
-			                Toast.LENGTH_LONG).show();        
-			        }
+			super.onDestroy();
+			Toast.makeText(this, "Service destroyed ...", Toast.LENGTH_LONG)
+					.show();
 		}
-////////////////////////////////////////////////////////////////////////////////////////////
-	
-	
-///public class Broadcast
-////////////////////////////////////////////////////////////////////////////////////////////	
+	}
+
+	// //////////////////////////////////////////////////////////////////////////////////////////
+
+	// /public class Broadcast
+	// //////////////////////////////////////////////////////////////////////////////////////////
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (D)
 			Log.d(TAG, "onActivityResult " + resultCode);
@@ -411,12 +397,41 @@ public class MainActivity extends Activity {
 			serverIntent = new Intent(this, BtDeviceListActivity.class);
 			startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
 			return true;
-	
-			
+
 		}
 
 		return false;
 	}
+
+	class ReadResult {
+
+		String valueFromData;
+		String actionStringForBroadcastReceiver;
+	}
+	;
 	
+	
+	private ReadResult parseMessageFromHandler(String data) {
+		
+		ReadResult response = new ReadResult();
+		for (int i = 1; i < 6; i++) {
+			response.valueFromData += data.charAt(i);
+		}
+		switch (data.charAt(0)) {
+		case 'r':
+			response.actionStringForBroadcastReceiver = "RMS";
+			break;
+		case 'a':
+			response.actionStringForBroadcastReceiver = "AVG";
+			break;
+		case 'm':
+			response.actionStringForBroadcastReceiver = "MAX";
+			break;
+		case 'n':
+			response.actionStringForBroadcastReceiver = "MIN";
+			break;
+		}
+		return response;
+	}
 
 }
