@@ -3,18 +3,23 @@ package com.inz.rogovskycurrentmeter;
 import com.inz.rogovskycurrentmeter.chart.FFTChart;
 import com.inz.rogovskycurrentmeter.chart.RMSTimeChart;
 
+
+
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.ListActivity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,7 +51,7 @@ public class Results extends Activity {
 	private StringBuffer mOutStringBuffer;
 	private Handler rmsHandler = new Handler();
 	
-	private TextView rmsValue;
+	private TextView rmsValue, avgValue, minValue,maxValue;
 	private Button rmsChart;
 	private Button fftChart;
 	
@@ -76,23 +81,41 @@ public class Results extends Activity {
 	
 };
 	
-DataResults allDataResults = new DataResults();
-	
-	public static double rmsResult =0;
-	
-	MyDataReceiver myData;
-	IntentFilter intentDataFilter;
+   DataResults allDataResults = new DataResults();
+   public static double rmsResult =0;
+   MyDataReceiver myData;
+   IntentFilter intentDataFilter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.results);
+	/*	
+		Context ctx = getApplicationContext();
+		Resources res = ctx.getResources();
+		String[] names = res.getStringArray(R.array.data_names);
+		String[] values = res.getStringArray(R.array.data_values);
+		setListAdapter(new DataAdapter(ctx, R.layout.results_items, names, values));
+		*/
+	//	 ListView listView = new ListView(ctx) ;
+		// listView.setAdapter(new DataAdapter(ctx, R.layout.results_items, names, values));
+	      //listView.setItemsCanFocus(false);
+	   
+		
+		
+		
 		rmsValue = (TextView) findViewById(R.id.rmsValue);
+		avgValue = (TextView) findViewById(R.id.avgValue);
+		minValue = (TextView) findViewById(R.id.minValue);
+		maxValue = (TextView) findViewById(R.id.maxValue);
 		rmsChart = (Button) findViewById(R.id.btnRmsChart);
 		fftChart = (Button) findViewById(R.id.btnFFTChart);
        
+	
+		//ListView resultsList = (ListView) findViewById(R.id.);
+		
+		
 		View.OnClickListener buttonHandler = new View.OnClickListener() {
-
 			@Override
 			public void onClick(View v) {
 				Intent chartIntent = null;
@@ -116,7 +139,7 @@ DataResults allDataResults = new DataResults();
 		};
 		rmsChart.setOnClickListener(buttonHandler);
 		fftChart.setOnClickListener(buttonHandler);
-		
+	
 		myData =new MyDataReceiver();    // new broadcast receiver for result data
         intentDataFilter = new IntentFilter(MainActivity.DATA_ACTION);
 	   
@@ -124,6 +147,8 @@ DataResults allDataResults = new DataResults();
 		avgValue.setText(allDataResults.getAvgData());
 		minValue.setText(allDataResults.getMinData());
 		maxValue.setText(allDataResults.getMaxData());
+		
+		
 		//rmsValue.setText(MainActivity.readFullMessage);     //TODO odkomentowac WORKAROUND NA ZWISYYYYYY!!!
 
 		// /rmsValue.setText(getIntent().getStringExtra("DATA"));
@@ -148,15 +173,10 @@ DataResults allDataResults = new DataResults();
 								@Override
 								public void run() {
 									rmsValue.setText(allDataResults.getRmsData());
-									avgValue.setText(allDataResults.getAvgData());
-									minValue.setText(allDataResults.getMinData());
-									maxValue.setText(allDataResults.getMaxData());
-									/*rmsValue.setText(MainActivity.readFullMessage);
-									if(MainActivity.readFullMessage!=null){
-									rmsResult=Double.parseDouble(MainActivity.readFullMessage); // here I send to RMS Chart // RMSTimeChart Activity
-									}if (D)
-										Log.i(TAG, Double.toString(rmsResult));
-										*/
+									//avgValue.setText(allDataResults.getAvgData());
+									//minValue.setText(allDataResults.getMinData());
+									//maxValue.setText(allDataResults.getMaxData());
+									
 								}
 							});
 
@@ -164,21 +184,23 @@ DataResults allDataResults = new DataResults();
 
 					}
 				}).start();
+				
+				
 	}
 	
 	
 	@Override
 	protected void onResume(){
 		super.onResume();
-		registerReceiver(myData, intentDataFilter);
+		registerReceiver(myData, intentDataFilter); 
 	}
 	
 
 	
 	@Override
 	protected void onDestroy(){
-		super.onResume();
-		unregisterReceiver(myData);
+		super.onDestroy();
+		unregisterReceiver(myData); 
 	}
 	
 	private void sendCommand(String message) {
@@ -213,9 +235,9 @@ DataResults allDataResults = new DataResults();
 		@Override
 		public void onReceive(Context context , Intent i){
 			allDataResults.setRmsData(i.getStringExtra("RMS"));
-			allDataResults.setAvgData(i.getStringExtra("AVG"));
-			allDataResults.setMinData(i.getStringExtra("MIN"));   
-			allDataResults.setMaxData(i.getStringExtra("MAX"));   
+			///allDataResults.setAvgData(i.getStringExtra("AVG"));   
+			///allDataResults.setMinData(i.getStringExtra("MIN"));   
+			///allDataResults.setMaxData(i.getStringExtra("MAX"));   
 	        //abortBroadcast();
 		}
 	}

@@ -414,6 +414,7 @@ public class MainActivity extends Activity {
 	private ReadResult parseMessageFromHandler(String data) {
 		
 		ReadResult response = new ReadResult();
+		response.valueFromData="";
 		for (int i = 1; i < 6; i++) {
 			response.valueFromData += data.charAt(i);
 		}

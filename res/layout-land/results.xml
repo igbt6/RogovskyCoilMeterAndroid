@@ -168,7 +168,7 @@
      <Button
          android:id="@+id/btnRmsChart"
          style="@style/ButtonText"
-         android:layout_width="268dp"
+         android:layout_width="491dp"
          android:layout_column="0"
          android:layout_gravity="left|top"
          android:layout_row="0"
@@ -178,7 +178,7 @@
      <Button
          android:id="@+id/btnFFTChart"
          style="@style/ButtonText"
-         android:layout_width="267dp"
+         android:layout_width="509dp"
          android:layout_column="0"
          android:layout_gravity="right|top"
          android:layout_row="0"
