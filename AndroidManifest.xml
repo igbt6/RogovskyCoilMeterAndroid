@@ -32,10 +32,10 @@
             android:label="@string/scanning" 
             android:theme="@android:style/Theme.Holo.Dialog" />
     
-        <activity android:name="com.inz.rogovskycurrentmeter.Results" 
-             />
+        <activity android:name="com.inz.rogovskycurrentmeter.Results" />
 		<activity android:name="com.inz.rogovskycurrentmeter.chart.RMSTimeChart" />
-
+		<activity android:name="org.achartengine.GraphicalActivity" />
+       
            <!--  --> 
            
            <!--<receiver android:name ="com.inz.rogovskycurrentmeter.DataReceiver">

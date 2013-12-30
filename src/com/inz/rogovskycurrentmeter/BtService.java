@@ -486,7 +486,8 @@ public class BtService {
 								///}
 								msg +=ch ;
 								bytesCounter++;
-							} while ((ch =(char) mmInStream.read()) != 120&&bytesCounter<8);
+							} 
+							while ((ch =(char) mmInStream.read()) != 120&&bytesCounter<8);
 							
 							String copyBuffer  = msg;
 							mHandler.obtainMessage(MainActivity.MESSAGE_READ,

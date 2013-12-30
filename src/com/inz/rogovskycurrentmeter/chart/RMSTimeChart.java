@@ -53,10 +53,10 @@ public class RMSTimeChart extends Activity {
 
 	// chart container
 	private LinearLayout layout;
-	
+
 	MyDataReceiver myData;
 	IntentFilter intentDataFilter;
-	AsyncTask<Void, String, Void> receiverTask =new RMSChartTask() ;
+	AsyncTask<Void, String, Void> receiverTask = new RMSChartTask();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -65,23 +65,18 @@ public class RMSTimeChart extends Activity {
 		setContentView(R.layout.rms_time_chart);
 
 		layout = (LinearLayout) findViewById(R.id.chart);
-		rmsData="0";
-		myData =new MyDataReceiver();   
-	    intentDataFilter = new IntentFilter(MainActivity.DATA_ACTION); //for broadcast receiver
+		rmsData = "0";
+		myData = new MyDataReceiver();
+		intentDataFilter = new IntentFilter(MainActivity.DATA_ACTION); // for
+																		// broadcast
+																		// receiver
 		double[] x = { 1, 50, 100, 150, 200, 250, 340, 360, 390, 410, 435, 500 };
 		Date dateValue = new Date();
 		// for (int i = 0; i < titles.length; i++) {
 		// x.add(new double[] { 1, 50, 100, 150,200, 250, 340, 360, 390,
 		// 410,435, 500 });
 		// }
-		double[] yValues = { 33.7, 33.6, 34.1, 34.1, 34.0, 33.8, 33.8, 33.8,
-				33.8, 33.7, 34.1, 33.7, 34.1, 34.0, 34.1, 33.7, 33.6, 34.1,
-				34.1, 34.0, 33.8, 33.8, 33.7, 33.7, 33.5, 34.1, 34.1, 33.7,
-				34.4, 34.1, 34.0, 34.1, 34.0, 33.8, 33.8, 33.8, 33.8, 33.8, };
-		// values.add(new double[] {33.7, 33.6, 34.1,34.1, 34.0,33.8, 33.8,
-		// 33.8, 33.8, 33.7, 34.1, 33.7, 34.1, 34.0, 34.1, 33.7, 33.6,
-		// 34.1,34.1, 34.0,33.8, 33.8, 33.7,33.7, 33.5, 34.1, 34.1, 33.7, 34.4,
-		// 34.1, 34.0,34.1, 34.0,33.8, 33.8, 33.8, 33.8, 33.8, });
+		
 
 		mRenderer = new XYMultipleSeriesRenderer();
 		mDataset = new XYMultipleSeriesDataset();
@@ -108,22 +103,22 @@ public class RMSTimeChart extends Activity {
 		mRenderer.setChartTitleTextSize(20);
 		mRenderer.setLabelsTextSize(15);
 		mRenderer.setLegendTextSize(15);
-		//mRenderer.setPointSize(5f);
+		// mRenderer.setPointSize(5f);
 		mRenderer.setInScroll(true);
 		mRenderer.setMargins(new int[] { 20, 30, 15, 20 });
 
 		XYSeriesRenderer r = new XYSeriesRenderer();
 		r.setColor(Color.RED);
-		//r.setPointStyle(PointStyle.CIRCLE);
-		//r.setFillPoints(true);
+		// r.setPointStyle(PointStyle.CIRCLE);
+		// r.setFillPoints(true);
 		r.setDisplayChartValues(true);
 		r.setLineWidth(1);
 		mRenderer.addSeriesRenderer(r);
 		mRenderer.setClickEnabled(true);
 		mRenderer.setSelectableBuffer(20);
 		mRenderer.setPanEnabled(true);
-		mRenderer.setPanEnabled(true,true);
-		mRenderer.setZoomEnabled(true,true);
+		mRenderer.setPanEnabled(true, true);
+		mRenderer.setZoomEnabled(true, true);
 		mRenderer.setBackgroundColor(Color.BLACK);
 		mRenderer.setLabelsTextSize(16);
 		mRenderer.setAntialiasing(false);
@@ -145,24 +140,21 @@ public class RMSTimeChart extends Activity {
 		layout.addView(mChartView);
 		receiverTask.execute();
 	}
-	
-	
+
 	@Override
-	protected void onResume(){
+	protected void onResume() {
 		super.onResume();
 		registerReceiver(myData, intentDataFilter);
-		
-		
-	}
-	
 
-	
+	}
+
 	@Override
-	protected void onDestroy(){
+	protected void onDestroy() {
 		super.onResume();
 		unregisterReceiver(myData);
 		receiverTask.cancel(true);
 	}
+
 	/*
 	 * private void fillData() { long value = new Date().getTime() - 3 *
 	 * TimeChart.DAY; for (int i = 0; i < 100; i++) { time_series.add(new
@@ -206,16 +198,16 @@ public class RMSTimeChart extends Activity {
 
 	}
 
-	private void adjustAxisLengths(double xLastValue ,double yLastValue) {
+	private void adjustAxisLengths(double xLastValue, double yLastValue) {
 
 		if (xLastValue > xAxisMax) {
 
-			if (((int)xAxisMax / 1000) > 0) {
-				
+			if (((int) xAxisMax / 1000) > 0) {
+
 				Log.i("xMAXAxis", Double.toString(xAxisMax / 1000));
 				xAxisMax += 1000;
 				xAxisMin += 100;
-			} else if (((int)xAxisMax / 100) > 0) {
+			} else if (((int) xAxisMax / 100) > 0) {
 
 				xAxisMax += 100;
 				xAxisMin += 100;
@@ -283,12 +275,12 @@ public class RMSTimeChart extends Activity {
 
 			try {
 
-				while(true){
+				while (true) {
 					String[] values = new String[2];
 					Random r = new Random();
 					values[0] = Double.toString(i);
-					//values[1]=rmsData;
-					values[1]=MainActivity.readFullMessage;
+					values[1] = rmsData;
+					// values[1]=MainActivity.readFullMessage;
 					publishProgress(values);
 					Thread.sleep(10);
 					i++;
@@ -306,11 +298,11 @@ public class RMSTimeChart extends Activity {
 
 			super.onProgressUpdate(values);
 			// addRealTimeXYSerie(mTimeSerie,Double.parseDouble(values[0]),Double.parseDouble(values[1]));
-			//Log.d("ASYNC_TASK" , "BFR_ADDED" );
+			// Log.d("ASYNC_TASK" , "BFR_ADDED" );
 			double yValue = Double.parseDouble(values[1]);
 			double xValue = Double.parseDouble(values[0]);
 			mTimeSerie.add(xValue, yValue);
-			adjustAxisLengths(xValue,yValue);
+			adjustAxisLengths(xValue, yValue);
 			// Log.d("ASYNC_TASK" , "AFTER_ADDED" );
 			mChartView.repaint();
 		}
@@ -318,12 +310,15 @@ public class RMSTimeChart extends Activity {
 	}
 
 	public class MyDataReceiver extends BroadcastReceiver {
+		private String response = null;
+
 		@Override
-		public void onReceive(Context context , Intent i){
-			
-			rmsData= i.getStringExtra("DATA");
-	                      
-	        //abortBroadcast(); for sending ordererd broadcasts
+		public void onReceive(Context context, Intent i) {
+			response = i.getStringExtra("RMS");
+			if (response != null) {
+				rmsData = response;
+			}
+			// abortBroadcast(); for sending ordererd broadcasts
 		}
 	}
 }

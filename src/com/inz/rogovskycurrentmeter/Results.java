@@ -1,9 +1,7 @@
- package com.inz.rogovskycurrentmeter;
+package com.inz.rogovskycurrentmeter;
 
 import com.inz.rogovskycurrentmeter.chart.FFTChart;
 import com.inz.rogovskycurrentmeter.chart.RMSTimeChart;
-
-
 
 import android.app.ActionBar;
 import android.app.Activity;
@@ -38,8 +36,6 @@ public class Results extends Activity {
 	public static final int MESSAGE_DEVICE_NAME = 4;
 	public static final int MESSAGE_TOAST = 5;
 
-	
-	
 	// Key names received from the BluetoothService Handler
 	public static final String DEVICE_NAME = "device_name";
 	public static final String TOAST = "toast";
@@ -50,58 +46,80 @@ public class Results extends Activity {
 	// String buffer for outgoing messages
 	private StringBuffer mOutStringBuffer;
 	private Handler rmsHandler = new Handler();
-	
-	private TextView rmsValue, avgValue, minValue,maxValue;
+
+	private TextView rmsValue, avgValue, minValue, maxValue;
 	private Button rmsChart;
 	private Button fftChart;
-	
-	private class DataResults{	private String rmsData; // used in Broadcast receiver
-	
-	public DataResults() {
-		this.setRmsData("0");
-		this.setAvgData("0");
-		this.setMinData("0");  
-		this.setMaxData("0");
-	}
-	private String avgData; // used in Broadcast receiver
-	private String maxData; // used in Broadcast receiver
-	private String minData; // used in Broadcast receiver
-	private String fftData; // used in Broadcast receiver
-	 //setters getters  TODO for FFT
-	public void setRmsData(String rmsData){this.rmsData=rmsData;}
-	public void  setAvgData(String avgData){this.avgData=avgData;}
-	public void setMinData(String minData){this.minData=minData;}
-	public void setMaxData(String maxData){this.maxData=maxData;}
-	
-	public String getRmsData(){return rmsData;}
-	public String getAvgData(){return avgData;}
-	public String getMinData(){return minData;}
-	public String getMaxData(){return maxData;}
-	
-	
-};
-	
-   DataResults allDataResults = new DataResults();
-   public static double rmsResult =0;
-   MyDataReceiver myData;
-   IntentFilter intentDataFilter;
+
+	private class DataResults {
+		private String rmsData; // used in Broadcast receiver
+
+		public DataResults() {
+			this.setRmsData("0");
+			this.setAvgData("0");
+			this.setMinData("0");
+			this.setMaxData("0");
+		}
+
+		private String avgData; // used in Broadcast receiver
+		private String maxData; // used in Broadcast receiver
+		private String minData; // used in Broadcast receiver
+		private String fftData; // used in Broadcast receiver
+
+		// setters getters TODO for FFT
+		public void setRmsData(String rmsData) {
+			this.rmsData = rmsData;
+		}
+
+		public void setAvgData(String avgData) {
+			this.avgData = avgData;
+		}
+
+		public void setMinData(String minData) {
+			this.minData = minData;
+		}
+
+		public void setMaxData(String maxData) {
+			this.maxData = maxData;
+		}
+
+		public String getRmsData() {
+			return rmsData;
+		}
+
+		public String getAvgData() {
+			return avgData;
+		}
+
+		public String getMinData() {
+			return minData;
+		}
+
+		public String getMaxData() {
+			return maxData;
+		}
+
+	};
+
+	DataResults allDataResults = new DataResults();
+	public static double rmsResult = 0;
+	MyDataReceiver myData;
+	IntentFilter intentDataFilter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.results);
-	
-	    rmsValue = (TextView) findViewById(R.id.rmsValue);
+
+		rmsValue = (TextView) findViewById(R.id.rmsValue);
 		avgValue = (TextView) findViewById(R.id.avgValue);
 		minValue = (TextView) findViewById(R.id.minValue);
 		maxValue = (TextView) findViewById(R.id.maxValue);
 		rmsChart = (Button) findViewById(R.id.btnRmsChart);
 		fftChart = (Button) findViewById(R.id.btnFFTChart);
-       
-	
-		//ListView resultsList = (ListView) findViewById(R.id.);
-		
-		
+
+		// ListView resultsList = (ListView) findViewById(R.id.);
+
 		View.OnClickListener buttonHandler = new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -109,15 +127,17 @@ public class Results extends Activity {
 				switch (v.getId()) {
 
 				case R.id.btnRmsChart:
-					//RMSChart rmsChartBuilder = new RMSChart();
-				//	intent = rmsChartBuilder.execute(getApplicationContext());
+					// RMSChart rmsChartBuilder = new RMSChart();
+					// intent =
+					// rmsChartBuilder.execute(getApplicationContext());
 					chartIntent = new Intent(Results.this, RMSTimeChart.class);
 
 					startActivity(chartIntent);
 					break;
 				case R.id.btnFFTChart:
 					FFTChart fftChartBuilder = new FFTChart();
-					chartIntent = fftChartBuilder.execute(getApplicationContext());
+					chartIntent = fftChartBuilder
+							.execute(getApplicationContext());
 					startActivity(chartIntent);
 					break;
 				}
@@ -126,17 +146,17 @@ public class Results extends Activity {
 		};
 		rmsChart.setOnClickListener(buttonHandler);
 		fftChart.setOnClickListener(buttonHandler);
-	
-		myData =new MyDataReceiver();    // new broadcast receiver for result data
-        intentDataFilter = new IntentFilter(MainActivity.DATA_ACTION);
-	   
-        rmsValue.setText(allDataResults.getRmsData());
+
+		myData = new MyDataReceiver(); // new broadcast receiver for result data
+		intentDataFilter = new IntentFilter(MainActivity.DATA_ACTION);
+
+		rmsValue.setText(allDataResults.getRmsData());
 		avgValue.setText(allDataResults.getAvgData());
 		minValue.setText(allDataResults.getMinData());
 		maxValue.setText(allDataResults.getMaxData());
-		
-		
-		//rmsValue.setText(MainActivity.readFullMessage);     //TODO odkomentowac WORKAROUND NA ZWISYYYYYY!!!
+
+		// rmsValue.setText(MainActivity.readFullMessage); //TODO odkomentowac
+		// WORKAROUND NA ZWISYYYYYY!!!
 
 		// /rmsValue.setText(getIntent().getStringExtra("DATA"));
 		// mBtService = new BtService(Results.this, mHandler);
@@ -146,50 +166,45 @@ public class Results extends Activity {
 		sendCommand("FUMIKO19");
 
 		new Thread(new Runnable() {
-					@Override
-					public void run() {
-						while (true) {
-							try {
-								Thread.sleep(10);
-							} catch (InterruptedException e) {
-								e.printStackTrace();
-							}
+			@Override
+			public void run() {
+				while (true) {
+					try {
+						Thread.sleep(10);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 
-							rmsHandler.post(new Runnable() {
+					rmsHandler.post(new Runnable() {
 
-								@Override
-								public void run() {
-									rmsValue.setText(allDataResults.getRmsData());
-									avgValue.setText(allDataResults.getAvgData());
-									minValue.setText(allDataResults.getMinData());
-									maxValue.setText(allDataResults.getMaxData());
-									
-								}
-							});
+						@Override
+						public void run() {
+							rmsValue.setText(allDataResults.getRmsData());
+							avgValue.setText(allDataResults.getAvgData());
+							minValue.setText(allDataResults.getMinData());
+							maxValue.setText(allDataResults.getMaxData());
 
 						}
+					});
 
-					}
-				}).start();
-				
-				
+				}
+
+			}
+		}).start();
 	}
-	
-	
+
 	@Override
-	protected void onResume(){
+	protected void onResume() {
 		super.onResume();
-		registerReceiver(myData, intentDataFilter); 
+		registerReceiver(myData, intentDataFilter);
 	}
-	
 
-	
 	@Override
-	protected void onDestroy(){
+	protected void onDestroy() {
 		super.onDestroy();
-		unregisterReceiver(myData); 
+		unregisterReceiver(myData);
 	}
-	
+
 	private void sendCommand(String message) {
 		// Check that we're actually connected before trying anything
 		if (MainActivity.mChatService.getState() != BtService.STATE_CONNECTED) {
@@ -206,49 +221,50 @@ public class Results extends Activity {
 		}
 	}
 
-
 	private final void setStatus(int resId) {
 		final ActionBar actionBar = getActionBar();
 		actionBar.setSubtitle(resId);
-
 	}
 
 	private final void setStatus(CharSequence subTitle) {
 		final ActionBar actionBar = getActionBar();
 		actionBar.setSubtitle(subTitle);
 	}
-	
+
 	public class MyDataReceiver extends BroadcastReceiver {
-		private String messages[]={"MAX","RMS","AVG","MIN"};
-		private String response=null;
+		private String messages[] = { "MAX", "RMS", "AVG", "MIN" };
+		private String response = null;
 		private int loopCounter;
+
 		@Override
-		public void onReceive(Context context , Intent i){
-			loopCounter=0;
-			for(String mes:messages){
-				
-				response=i.getStringExtra(mes);
-				if(response!=null){break;}
+		public void onReceive(Context context, Intent i) {
+			loopCounter = 0;
+			for (String mes : messages) {
+
+				response = i.getStringExtra(mes);
+				if (response != null) {
+					break;
+				}
 				loopCounter++;
-				
+
 			}
-			switch(loopCounter){
-			case 0:allDataResults.setMaxData(response);break;
-			case 1:allDataResults.setRmsData(response);break;
-			case 2:allDataResults.setAvgData(response);break;
-			case 3:allDataResults.setMinData(response);break;
-			default:break;
-		
-			
+			switch (loopCounter) {
+			case 0:
+				allDataResults.setMaxData(response);
+				break;
+			case 1:
+				allDataResults.setRmsData(response);
+				break;
+			case 2:
+				allDataResults.setAvgData(response);
+				break;
+			case 3:
+				allDataResults.setMinData(response);
+				break;
+			default:
+				break;
 			}
-		/*	allDataResults.setMaxData(i.getStringExtra("MAX"));   
-			allDataResults.setRmsData(i.getStringExtra("RMS"));
-			allDataResults.setAvgData(i.getStringExtra("AVG"));   
-			allDataResults.setMinData(i.getStringExtra("MIN"));   
-		*/
-	        //abortBroadcast();
 		}
 	}
-	
 
 }
