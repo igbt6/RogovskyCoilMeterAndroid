@@ -1,4 +1,4 @@
-package com.inz.rogovskycurrentmeter;
+ package com.inz.rogovskycurrentmeter;
 
 import com.inz.rogovskycurrentmeter.chart.FFTChart;
 import com.inz.rogovskycurrentmeter.chart.RMSTimeChart;
@@ -90,21 +90,8 @@ public class Results extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.results);
-	/*	
-		Context ctx = getApplicationContext();
-		Resources res = ctx.getResources();
-		String[] names = res.getStringArray(R.array.data_names);
-		String[] values = res.getStringArray(R.array.data_values);
-		setListAdapter(new DataAdapter(ctx, R.layout.results_items, names, values));
-		*/
-	//	 ListView listView = new ListView(ctx) ;
-		// listView.setAdapter(new DataAdapter(ctx, R.layout.results_items, names, values));
-	      //listView.setItemsCanFocus(false);
-	   
-		
-		
-		
-		rmsValue = (TextView) findViewById(R.id.rmsValue);
+	
+	    rmsValue = (TextView) findViewById(R.id.rmsValue);
 		avgValue = (TextView) findViewById(R.id.avgValue);
 		minValue = (TextView) findViewById(R.id.minValue);
 		maxValue = (TextView) findViewById(R.id.maxValue);
@@ -173,9 +160,9 @@ public class Results extends Activity {
 								@Override
 								public void run() {
 									rmsValue.setText(allDataResults.getRmsData());
-									//avgValue.setText(allDataResults.getAvgData());
-									//minValue.setText(allDataResults.getMinData());
-									//maxValue.setText(allDataResults.getMaxData());
+									avgValue.setText(allDataResults.getAvgData());
+									minValue.setText(allDataResults.getMinData());
+									maxValue.setText(allDataResults.getMaxData());
 									
 								}
 							});
@@ -232,12 +219,33 @@ public class Results extends Activity {
 	}
 	
 	public class MyDataReceiver extends BroadcastReceiver {
+		private String messages[]={"MAX","RMS","AVG","MIN"};
+		private String response=null;
+		private int loopCounter;
 		@Override
 		public void onReceive(Context context , Intent i){
+			loopCounter=0;
+			for(String mes:messages){
+				
+				response=i.getStringExtra(mes);
+				if(response!=null){break;}
+				loopCounter++;
+				
+			}
+			switch(loopCounter){
+			case 0:allDataResults.setMaxData(response);break;
+			case 1:allDataResults.setRmsData(response);break;
+			case 2:allDataResults.setAvgData(response);break;
+			case 3:allDataResults.setMinData(response);break;
+			default:break;
+		
+			
+			}
+		/*	allDataResults.setMaxData(i.getStringExtra("MAX"));   
 			allDataResults.setRmsData(i.getStringExtra("RMS"));
-			///allDataResults.setAvgData(i.getStringExtra("AVG"));   
-			///allDataResults.setMinData(i.getStringExtra("MIN"));   
-			///allDataResults.setMaxData(i.getStringExtra("MAX"));   
+			allDataResults.setAvgData(i.getStringExtra("AVG"));   
+			allDataResults.setMinData(i.getStringExtra("MIN"));   
+		*/
 	        //abortBroadcast();
 		}
 	}

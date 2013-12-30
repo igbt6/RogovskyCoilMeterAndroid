@@ -1,11 +1,7 @@
 package com.inz.rogovskycurrentmeter;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -24,8 +20,6 @@ import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
 
-import com.inz.rogovskycurrentmeter.AlertDialogManager;
-
 public class BtDeviceListActivity extends Activity {
 	// Debugging
 	private static final String TAG = "DeviceListActivity";
@@ -40,7 +34,8 @@ public class BtDeviceListActivity extends Activity {
 	private BluetoothAdapter mBtAdapter;
 	private Map<String, String> btPairedDevices;
 	private Handler deviceHandler = new Handler();
-	
+
+	AlertDialog alertDialog = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +84,7 @@ public class BtDeviceListActivity extends Activity {
 					public void run() {
 						while (seekDeviceProgressStatus < 100) {
 							try {
-								Thread.sleep(100);
+								Thread.sleep(10);
 							} catch (InterruptedException e) {
 								e.printStackTrace();
 							}
@@ -123,6 +118,9 @@ public class BtDeviceListActivity extends Activity {
 
 		// Unregister broadcast listeners
 		this.unregisterReceiver(mReceiver);
+		if (alertDialog != null) {
+			alertDialog.dismiss();
+		}
 	}
 
 	/**
@@ -141,23 +139,26 @@ public class BtDeviceListActivity extends Activity {
 		mBtAdapter.startDiscovery();
 
 	}
-   private class WaitDialogThread implements Runnable{
-	   private int counter=0;
-	   @Override
-	   public void run(){
-		   while(counter<100){
-			   if (D) Log.d("THREADD", "waitThread");
-		   try{Thread.sleep(100);}
-		   catch(InterruptedException e) {
-				e.printStackTrace();
+
+	private class WaitDialogThread implements Runnable {
+		private int counter = 0;
+
+		@Override
+		public void run() {
+			while (counter < 100) {
+				if (D)
+					Log.d("THREADD", "waitThread");
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				counter++;
 			}
-		   counter++;
-		   }
-		   finish();  // after 10 sec , close application
+			finish(); // after 10 sec , close application
+		}
 	}
-	}
-   
-   
+
 	private void searchForAvailableMeter() {
 		mBtAdapter.cancelDiscovery(); // Cancel discovery because it's costly
 										// and we're about to connect
@@ -167,9 +168,10 @@ public class BtDeviceListActivity extends Activity {
 			if (D)
 				Log.d(TAG, entry.getKey() + "\n");
 			for (String avDevice : availableDevices) {
-				if (D)
-					Log.d(TAG, "---->" + avDevice + "\n");
-				if ((entry.getKey()).equals(avDevice)) {  // TODO   wydupczyl sie tu  pies wie czemu 
+				// if (D)
+				// Log.d(TAG, "---->" + avDevice + "\n");
+				if ((entry.getKey()).equals(avDevice)) { // TODO wydupczyl sie
+															// tu pies wie czemu
 					if (D)
 						Log.d(TAG, "DEVICE was fOUND!!!!!!!!");
 					// Create the result Intent and include the MAC address
@@ -190,16 +192,19 @@ public class BtDeviceListActivity extends Activity {
 		if (D)
 			Log.d(TAG, "NO DEVICE FOUND!!! ! !!!!!!!!!");
 		noDeviceAlertDialog();
-		
+
 	}
 
-	private void noDeviceAlertDialog(){
-		//requestWindowFeature(Window.); //TODO wylaczyc scanning devices after all
-		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this
-				);
-		alertDialogBuilder.setTitle("NO DEVICES WAS FOUND").setMessage("Do you want to scan again or shall I close the application?")
+	private void noDeviceAlertDialog() {
+		// requestWindowFeature(Window.); //TODO wylaczyc scanning devices after
+		// all
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+		alertDialogBuilder
+				.setTitle("NO DEVICES WERE FOUND")
+				.setMessage(
+						"Do you want to scan again or shall I close the application?")
 				.setCancelable(true).setInverseBackgroundForced(true);
-				alertDialogBuilder
+		alertDialogBuilder
 				.setIcon(R.drawable.ic_not_ok)
 				.setPositiveButton("SCAN",
 						new DialogInterface.OnClickListener() {
@@ -213,18 +218,20 @@ public class BtDeviceListActivity extends Activity {
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog,
 									int which) {
-								android.os.Process.killProcess(android.os.Process.myPid());
-								
-								
+								android.os.Process
+										.killProcess(android.os.Process.myPid());
+
 							}
 						});
-				AlertDialog alertDialog = alertDialogBuilder.create();
-				alertDialog.show();
-				Thread waiter = new Thread(new WaitDialogThread()); // gdyby ktos nic nie wisnal to po 10 sek , wylaczenie
-				waiter.start();
-		}
-	
-	
+		alertDialog = alertDialogBuilder.create();
+		alertDialog.show();
+		Thread waiter = new Thread(new WaitDialogThread()); // gdyby ktos nic
+															// nie wisnal to po
+															// 10 sek ,
+															// wylaczenie
+		waiter.start();
+	}
+
 	private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
@@ -236,7 +243,7 @@ public class BtDeviceListActivity extends Activity {
 				// Get the BluetoothDevice object from the Intent
 				BluetoothDevice device = intent
 						.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-				
+
 				btPairedDevices.put(device.getName(), device.getAddress());
 				// When discovery is finished, change the Activity title
 			} else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED
@@ -246,8 +253,8 @@ public class BtDeviceListActivity extends Activity {
 				if (btPairedDevices.isEmpty()) {
 					if (D)
 						Log.d(TAG, "HASH MAP IS EMPTY"); // TODO
-					    noDeviceAlertDialog();
-				    } else
+					noDeviceAlertDialog();
+				} else
 					searchForAvailableMeter();
 			}
 		}

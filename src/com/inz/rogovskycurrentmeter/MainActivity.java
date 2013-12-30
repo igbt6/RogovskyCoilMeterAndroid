@@ -63,6 +63,7 @@ public class MainActivity extends Activity {
 	// Member object for the chat services
 	public static BtService mChatService = null;
 	private AlertDialogManager alertBuilder;
+	private ReadResult receiver = new ReadResult();
 
 	private Button mStartMeasureButton;
 
@@ -91,20 +92,17 @@ public class MainActivity extends Activity {
 		// setupChat() will then be called during onActivityResult
 		if (!mBluetoothAdapter.isEnabled()) { // TODO odkomentowac , WORKAROUND
 												// NA WSZYSTKIE ZWISY!!!!!!
-			Intent enableBtIntent = new Intent(
-					BluetoothAdapter.ACTION_REQUEST_ENABLE);
+			Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
 			startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
 		} else {
 			if (mChatService == null) {
 				// Intent searchIntent = null;
 				// searchIntent = new Intent(this, BtDeviceListActivity.class);
 				// startActivityForResult(searchIntent, REQUEST_CONNECT_DEVICE);
-
 				mChatService = new BtService(MainActivity.this, mHandler);
 			}
 			setupMainMenu();
 		}
-
 		// setupMainMenu();
 	}
 
@@ -183,7 +181,7 @@ public class MainActivity extends Activity {
 	public synchronized void onPause() {
 		super.onPause();
 		if (D)
-			Log.e(TAG, "- ON PAUSE -");
+			Log.e(TAG, "-- ON PAUSE --");
 	}
 
 	@Override
@@ -200,7 +198,7 @@ public class MainActivity extends Activity {
 		if (mChatService != null)
 			mChatService.stop();
 		if (D)
-			Log.e(TAG, "--- ON DESTROY ---");
+			Log.e(TAG, "-- ON DESTROY --");
 	}
 
 	/**
@@ -286,15 +284,15 @@ public class MainActivity extends Activity {
 				// construct a string from the buffer
 				String writeMessage = new String(writeBuf);
 				break;
-			case MESSAGE_READ:  // odbieram dane tutaj 
-				
-				ReadResult receiver= new ReadResult();
-				receiver= parseMessageFromHandler((String) msg.obj) ;
+			case MESSAGE_READ: // odbieram dane tutaj
+
+				receiver = parseMessageFromHandler((String) msg.obj);
 				if (D)
 					Log.i(TAG, "READ_MESSAGE: " + receiver.valueFromData);
 				readFullMessage = receiver.valueFromData;
 				Intent i = new Intent(DATA_ACTION);
-				i.putExtra(receiver.actionStringForBroadcastReceiver, receiver.valueFromData);
+				i.putExtra(receiver.actionStringForBroadcastReceiver,
+						receiver.valueFromData);
 				sendBroadcast(i); // wysylam Broadcasta
 				break;
 			case MESSAGE_DEVICE_NAME:
@@ -407,14 +405,12 @@ public class MainActivity extends Activity {
 
 		String valueFromData;
 		String actionStringForBroadcastReceiver;
-	}
-	;
-	
-	
+	};
+
 	private ReadResult parseMessageFromHandler(String data) {
-		
+
 		ReadResult response = new ReadResult();
-		response.valueFromData="";
+		response.valueFromData = "";
 		for (int i = 1; i < 6; i++) {
 			response.valueFromData += data.charAt(i);
 		}

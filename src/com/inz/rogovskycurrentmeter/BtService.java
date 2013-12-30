@@ -464,47 +464,18 @@ public class BtService {
 			// Keep listening to the InputStream while connected
 			while (true) {
 				try {
-/*
-					if (mmInStream.available() > 0) {
-						String msg = "";
-						Byte ch;
-						ch = (byte) mmInStream.read();
-						if (ch == 114) {//'r' 
-							bytesCounter = 0;
-							do {
 
-								Log.d(TAG,
-										"DATA RECEIVED DATA: " + ch.toString());
-								if (bytesCounter == 10) {
-									bytesCounter = 0;
-								}
-								buffer[bytesCounter] += ch;
-								bytesCounter++;
-							} while ((ch = (byte) mmInStream.read()) != 120);
-							String bufferTem = new String( buffer, 0, 10);
-							Log.i(TAG,
-									"DATA RECEIVED DATA: "
-											+ String.valueOf(bufferTem));
-							byte[] copyBuffer = buffer.clone();
-							String bufferTemp = new String(copyBuffer, 0, 10);
-							Log.i(TAG,
-									"DATA RECEIVED DATA: "
-											+ String.valueOf(bufferTemp));
-							Log.i(TAG, "TUMMMMMBY£dslkjg;lksdng;lsdgn ");
-							
-							mHandler.obtainMessage(MainActivity.MESSAGE_READ,
-									10, -1, copyBuffer).sendToTarget();
-							bytesCounter = 0;
-						}
-					}
-					*/
-					
+					//  bytes = mmInStream.read(buffer);
+				  //String bufferT = new String(buffer, 0, bytes);  /*************TO REMOVE*******************/
+					//  Log.d(TAG, "DATA RECEIVED BYTES: "+ String.valueOf(bytes));/*************TO REMOVE*******************/
+					//  Log.d(TAG, "DATA RECEIVED BYTES: "+ String.valueOf(bufferT));/*************TO REMOVE*******************/
 					// do wysy³ania stringow do maina
 					if (mmInStream.available() > 0) {
 						String msg = "";
 						Character ch;
 						ch = (char) mmInStream.read();
-						if (ch == 114) {
+						//Log.i(TAG,"ZNAKI : " + ch.toString());
+						if (ch == 114||ch==109||ch==110||ch==97) {   // chars 'r' , 'm' , 'n', 'a'  
 							bytesCounter = 0;
 							do {
 
@@ -519,45 +490,11 @@ public class BtService {
 							
 							String copyBuffer  = msg;
 							mHandler.obtainMessage(MainActivity.MESSAGE_READ,
-									10, -1, copyBuffer).sendToTarget();
-							bytesCounter = 0;
+									8, -1, copyBuffer).sendToTarget();  // TODO 8 was changed 
+							bytesCounter = 0; 
 						}
 					}
-					
-						/*
-						 * bytes = mmInStream.read(buffer); if (bytes == 10) {
-						 * // buffer[bytesCounter] = (byte) bytes; //
-						 * bytesCounter++; // if (bytesCounter >= 5) { //
-						 * bytesCounter = 0; if (parseMessageFromStream(buffer))
-						 * { byte[] copyBuffer = buffer.clone();
-						 * mHandler.obtainMessage( MainActivity.MESSAGE_READ,
-						 * bytes, -1, copyBuffer).sendToTarget(); }
-						 *//*
-							 * byte[] copyBuffer= buffer.clone();
-							 * 
-							 * mHandler.obtainMessage(MainActivity.MESSAGE_READ,
-							 * 5, -1, copyBuffer).sendToTarget();
-							 */
-						/*************
-						 * TO REMOVE String bufferTemp = new String(buffer, 0,
-						 * 5);
-						 * 
-						 * Log.d(TAG, "DATA RECEIVED BYTES: " +
-						 * String.valueOf(bytes));
-						 * 
-						 * Log.d(TAG, "DATA RECEIVED DATA: " +
-						 * String.valueOf(bufferTemp)); TO REMOVE
-						 *******************/
-						// ////////////////////////////////////////////////////
-						// }
-						// }
-
-						// Send the obtained bytes to the UI Activity
-						// if(bufferT.endsWith("\r")&&bufferT.length()==5){
-
-					
-
-				} catch (IOException e) {
+					 } catch (IOException e) {
 					Log.e(TAG, "disconnected", e);
 					connectionLost();
 					// Start the service over to restart listening mode

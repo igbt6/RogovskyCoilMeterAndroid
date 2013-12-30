@@ -43,27 +43,24 @@ public final class R {
         public static final int yellowbutton=0x7f02000b;
     }
     public static final class id {
-        public static final int Connect=0x7f09001b;
-        public static final int SearchForDevices=0x7f09001a;
+        public static final int Connect=0x7f090018;
         public static final int amp=0x7f090008;
         public static final int avgName=0x7f09000a;
         public static final int avgValue=0x7f09000b;
         public static final int btnFFTChart=0x7f090015;
         public static final int btnRmsChart=0x7f090014;
         public static final int button1=0x7f090003;
-        public static final int chart=0x7f090018;
+        public static final int chart=0x7f090016;
         public static final int chartbuttons=0x7f090013;
-        public static final int layXzoom=0x7f090019;
+        public static final int layXzoom=0x7f090017;
         public static final int maxName=0x7f090010;
         public static final int maxValue=0x7f090011;
         public static final int minName=0x7f09000d;
         public static final int minValue=0x7f09000e;
-        public static final int option_icon=0x7f090016;
-        public static final int option_text=0x7f090017;
         public static final int progress_bar_searching=0x7f090002;
         public static final int rmsName=0x7f090006;
         public static final int rmsValue=0x7f090007;
-        public static final int secure_connect_scan=0x7f09001c;
+        public static final int secure_connect_scan=0x7f090019;
         public static final int tableRow1=0x7f090005;
         public static final int tableRow2=0x7f090009;
         public static final int tableRow3=0x7f09000c;
@@ -79,10 +76,8 @@ public final class R {
         public static final int main=0x7f030002;
         public static final int message=0x7f030003;
         public static final int results=0x7f030004;
-        public static final int results_items=0x7f030005;
-        public static final int rms_time_chart=0x7f030006;
-        public static final int start_layout=0x7f030007;
-        public static final int testresults=0x7f030008;
+        public static final int rms_time_chart=0x7f030005;
+        public static final int start_layout=0x7f030006;
     }
     public static final class menu {
         public static final int option_menu=0x7f080000;
