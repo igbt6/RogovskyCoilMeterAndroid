@@ -1,29 +1,21 @@
 package com.inz.rogovskycurrentmeter.chart;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
 
+import java.util.Date;
+
+import java.util.Random;
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
-import org.achartengine.chart.PointStyle;
 import org.achartengine.chart.TimeChart;
-import org.achartengine.model.CategorySeries;
-import org.achartengine.model.MultipleCategorySeries;
 import org.achartengine.model.TimeSeries;
 import org.achartengine.model.XYMultipleSeriesDataset;
 import org.achartengine.model.XYSeries;
-import org.achartengine.renderer.DefaultRenderer;
-import org.achartengine.renderer.SimpleSeriesRenderer;
+
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 
 import com.inz.rogovskycurrentmeter.MainActivity;
 import com.inz.rogovskycurrentmeter.R;
-import com.inz.rogovskycurrentmeter.Results;
-import com.inz.rogovskycurrentmeter.Results.MyDataReceiver;
-
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -81,7 +73,7 @@ public class RMSTimeChart extends Activity {
 		mRenderer = new XYMultipleSeriesRenderer();
 		mDataset = new XYMultipleSeriesDataset();
 		xAxisMin = 0;
-		xAxisMax = 500;
+		xAxisMax = 20;
 		yAxisMin = 0;
 		yAxisMax = 20;
 
@@ -282,7 +274,7 @@ public class RMSTimeChart extends Activity {
 					values[1] = rmsData;
 					// values[1]=MainActivity.readFullMessage;
 					publishProgress(values);
-					Thread.sleep(10);
+					Thread.sleep(1000);
 					i++;
 				}// while (i < 500);
 			} catch (Exception e) {

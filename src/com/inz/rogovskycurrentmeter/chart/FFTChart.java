@@ -22,6 +22,9 @@ import org.achartengine.ChartFactory;
 import org.achartengine.chart.BarChart.Type;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 
+import com.inz.rogovskycurrentmeter.chart.RMSTimeChart.MyDataReceiver;
+
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -31,58 +34,87 @@ import android.graphics.Paint.Align;
  * Sales demo bar chart.
  */
 public class FFTChart extends AbstractBuildChart {
-  /**
-   * Returns the chart name.
-   * 
-   * @return the chart name
-   */
-  public String getName() {
-    return "FFT CHART";
-  }
+	/**
+	 * Returns the chart name.
+	 * 
+	 * @return the chart name
+	 */
+	public String getName() {
+		return "FFT CHART";
+	}
 
- /**
-   * Executes the chart demo.
-   * 
-   * @param context the context
-   * @return the built intent
-   */
-  public Intent execute(Context context) {
-    String[] titles = new String[] { "Data", "First harmonic of the signal : 50 [Hz]" };
-    List<double[]> values = new ArrayList<double[]>();
-    
-    values.add(new double[] { 34.1, 6.5, 3.4, 1.8, 1.05, 0.6, 0.6, 0.6, 0.6, 0.6, 0.3, 0.2, 0.2, 0.2, 0.2, 0.19, 0.18,0.16, 0.16, 0.16, 0.16, 0.16, 0.13, 0.12,0.12,0.11,0.10,0.06,0.06,0.03,0.01,0.01,
-        0.005, 0.003,0.003,0.003,0.001,0.001 });
-    values.add(new double[] { 
-       });
-    int[] colors = new int[] { Color.RED, Color.GREEN };
-    XYMultipleSeriesRenderer renderer = buildBarRenderer(colors);
-    setChartSettings(renderer, "FFT", "Number of harmonics", "Signal amplitude", 0,
-       30, 0, 50, Color.GRAY, Color.LTGRAY);
-    renderer.setShowGrid(true);
-    renderer.getSeriesRendererAt(0).setDisplayChartValues(true);
-    renderer.getSeriesRendererAt(0).setChartValuesSpacing(10);
-    renderer.getSeriesRendererAt(0).setChartValuesTextSize(15);
- 
-   
-    renderer.setScale(50f);
-   // renderer.getSeriesRendererAt(0).setDisplayChartValuesDistance(50);
-   // renderer.getSeriesRendererAt(0).
-   // renderer.getSeriesRendererAt(1).setDisplayChartValues(true);
- 
-    renderer.setXLabels(30);
+	private double FFTResults[] = new double[10];
 
-    renderer.setBarSpacing(50);
-    renderer.setYLabels(10);
+	/**
+	 * Executes the chart demo.
+	 * 
+	 * @param context
+	 *            the context
+	 * @return the built intent
+	 */
+	public Intent execute(Context context) {
+		String[] titles = new String[] { "Data",
+				"First harmonic of the signal : 50 [Hz]" };
+		List<double[]> values = new ArrayList<double[]>();
 
-    renderer.setXLabelsAlign(Align.LEFT);
-    renderer.setYLabelsAlign(Align.LEFT);
-    renderer.setPanEnabled(true, true);
-    renderer.setZoomEnabled(true);
-    renderer.setZoomButtonsVisible(true);
-    renderer.setZoomRate(1.5f);
-    renderer.setBarSpacing(2f);
-    return ChartFactory.getBarChartIntent(context, buildBarDataset(titles, values), renderer,
-        Type.STACKED,"CurrentMeter_v1.0");
-  }
+		values.add(new double[] { 34.1, 6.5, 3.4, 1.8, 1.05, 0.6, 0.6, 0.6,
+				0.6, 0.6, 0.3, 0.2, 0.2, 0.2, 0.2, 0.19, 0.18, 0.16, 0.16,
+				0.16, 0.16, 0.16, 0.13, 0.12, 0.12, 0.11, 0.10, 0.06, 0.06,
+				0.03, 0.01, 0.01, 0.005, 0.003, 0.003, 0.003, 0.001, 0.001 });
+		values.add(new double[] {});
+		int[] colors = new int[] { Color.RED, Color.GREEN };
+		XYMultipleSeriesRenderer renderer = buildBarRenderer(colors);
+		setChartSettings(renderer, "FFT", "Number of harmonics",
+				"Signal amplitude", 0, 30, 0, 50, Color.GRAY, Color.LTGRAY);
+		renderer.setShowGrid(true);
+		renderer.getSeriesRendererAt(0).setDisplayChartValues(true);
+		renderer.getSeriesRendererAt(0).setChartValuesSpacing(10);
+		renderer.getSeriesRendererAt(0).setChartValuesTextSize(15);
 
+		renderer.setScale(50f);
+		// renderer.getSeriesRendererAt(0).setDisplayChartValuesDistance(50);
+		// renderer.getSeriesRendererAt(0).
+		// renderer.getSeriesRendererAt(1).setDisplayChartValues(true);
+
+		renderer.setXLabels(30);
+
+		renderer.setBarSpacing(50);
+		renderer.setYLabels(10);
+
+		renderer.setXLabelsAlign(Align.LEFT);
+		renderer.setYLabelsAlign(Align.LEFT);
+		renderer.setPanEnabled(true, true);
+		renderer.setZoomEnabled(true);
+		renderer.setZoomButtonsVisible(true);
+		renderer.setZoomRate(1.5f);
+		renderer.setBarSpacing(2f);
+		return ChartFactory.getBarChartIntent(context,
+				buildBarDataset(titles, values), renderer, Type.STACKED,
+				"CurrentMeter_v1.0");
+	}
+	//MyDataReceiver myData;
+	public class MyDataReceiver extends BroadcastReceiver {
+		private String response = null;
+
+		@Override
+		public void onReceive(Context context, Intent i) {
+			response = i.getStringExtra("FFT");
+			if (response != null) {
+				switch (response.charAt(5)) {
+				case '0':
+				case '1':
+				case '2':
+				case '3':
+				case '4':
+				case '5':
+					FFTResults[Character.getNumericValue(response.charAt(5))] = Double
+							.parseDouble(response.substring(0, 4));
+					break;
+
+				}
+				// abortBroadcast(); for sending ordererd broadcasts
+			}
+		}
+
+	}
 }

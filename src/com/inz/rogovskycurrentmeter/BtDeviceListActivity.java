@@ -84,7 +84,7 @@ public class BtDeviceListActivity extends Activity {
 					public void run() {
 						while (seekDeviceProgressStatus < 100) {
 							try {
-								Thread.sleep(10);
+								Thread.sleep(5);
 							} catch (InterruptedException e) {
 								e.printStackTrace();
 							}
@@ -210,6 +210,7 @@ public class BtDeviceListActivity extends Activity {
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog,
 									int which) {
+								mBtAdapter.cancelDiscovery();// zakoncz trwajace
 								doDiscovery();
 								dialog.cancel();
 							}

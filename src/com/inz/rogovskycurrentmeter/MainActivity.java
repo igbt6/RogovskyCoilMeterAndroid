@@ -47,17 +47,10 @@ public class MainActivity extends Activity {
 	private static final int REQUEST_EXIT_APLICATION = 2;
 	private static final int REQUEST_ENABLE_BT = 3;
 	public static final String DATA_ACTION = "DATA_ACTION";
-	// Layout Views
-	private ListView mConversationView;
-	private EditText mOutEditText;
-	private Button mSendButton;
 
 	// Name of the connected device
 	private String mConnectedDeviceName = null;
-	// Array adapter for the conversation thread
-	private ArrayAdapter<String> mConversationArrayAdapter;
-	// String buffer for outgoing messages
-	private StringBuffer mOutStringBuffer;
+
 	// Local Bluetooth adapter
 	private BluetoothAdapter mBluetoothAdapter = null;
 	// Member object for the chat services
@@ -65,7 +58,8 @@ public class MainActivity extends Activity {
 	private AlertDialogManager alertBuilder;
 	private ReadResult receiver = new ReadResult();
 
-	private Button mStartMeasureButton;
+	private Button mStartMeasureButton, mConnectButton, mSlaveModeButton,
+			mSDCardButton;
 
 	public static String readFullMessage = null;
 
@@ -92,7 +86,8 @@ public class MainActivity extends Activity {
 		// setupChat() will then be called during onActivityResult
 		if (!mBluetoothAdapter.isEnabled()) { // TODO odkomentowac , WORKAROUND
 												// NA WSZYSTKIE ZWISY!!!!!!
-			Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+			Intent enableBtIntent = new Intent(
+					BluetoothAdapter.ACTION_REQUEST_ENABLE);
 			startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
 		} else {
 			if (mChatService == null) {
@@ -116,7 +111,8 @@ public class MainActivity extends Activity {
 		// not enabled during onStart(), so we were paused to enable it...
 		// onResume() will be called when ACTION_REQUEST_ENABLE activity
 		// returns.
-		if (mChatService != null) {
+		if (mChatService != null) { // /tttttttttttttttttttttttttttttttttttttttttt
+									// TODO
 			// Only if the state is STATE_NONE, do we know that we haven't
 			// started already
 
@@ -124,6 +120,7 @@ public class MainActivity extends Activity {
 				// Start the Bluetooth chat services
 				mChatService.start();
 			}
+
 		}
 	}
 
@@ -139,7 +136,7 @@ public class MainActivity extends Activity {
 				String[] message = getResources().getStringArray(
 						R.array.COMMANDS_TO_METER);
 				Log.i(TAG, "BEFORE COMMAND");
-				sendCommand(message[0]); // ODKOMENTOWAC
+				sendCommand(message[0]); // start to measure
 				Log.i(TAG, "AFTER COMMAND");
 				startActivity(measureResultsIntent);
 				// mChatService = new BtService(MainActivity.this, mHandler);
@@ -148,40 +145,40 @@ public class MainActivity extends Activity {
 				// mOutStringBuffer = new StringBuffer("");
 			}
 		});
-	}
+		mConnectButton = (Button) findViewById(R.id.connect);
+		mConnectButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent serverIntent = null;
+				serverIntent = new Intent(getApplicationContext(),
+						BtDeviceListActivity.class);
+				startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
+			}
+		});
 
-	/*
-	 * private void setupChat() { Log.d(TAG, "setupChat()");
-	 * 
-	 * // Initialize the array adapter for the conversation thread
-	 * mConversationArrayAdapter = new ArrayAdapter<String>(this,
-	 * R.layout.message); mConversationView = (ListView) findViewById(R.id.in);
-	 * mConversationView.setAdapter(mConversationArrayAdapter);
-	 * 
-	 * // Initialize the compose field with a listener for the return key
-	 * mOutEditText = (EditText) findViewById(R.id.edit_text_out); // tutaj bede
-	 * wysylal komendy do miernika
-	 * mOutEditText.setOnEditorActionListener(mWriteListener);
-	 * 
-	 * // Initialize the send button with a listener that for click events
-	 * mSendButton = (Button) findViewById(R.id.button_send);
-	 * mSendButton.setOnClickListener(new OnClickListener() { public void
-	 * onClick(View v) { // Send a message using content of the edit text widget
-	 * TextView view = (TextView) findViewById(R.id.edit_text_out); String
-	 * message = view.getText().toString(); sendCommand(message); } });
-	 * 
-	 * // Initialize the BluetoothChatService to perform bluetooth connections
-	 * mChatService = new BtService(this, mHandler);
-	 * 
-	 * // Initialize the buffer for outgoing messages mOutStringBuffer = new
-	 * StringBuffer(""); }
-	 */
+		mSlaveModeButton = (Button) findViewById(R.id.slavemode);
+		mSlaveModeButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+
+			}
+		});
+
+		mSDCardButton = (Button) findViewById(R.id.sdcard);
+		mSDCardButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+
+			}
+		});
+	}
 
 	@Override
 	public synchronized void onPause() {
 		super.onPause();
 		if (D)
 			Log.e(TAG, "-- ON PAUSE --");
+		// /if (mChatService != null) mChatService.stop();
 	}
 
 	@Override
@@ -226,23 +223,6 @@ public class MainActivity extends Activity {
 			// /mOutEditText.setText(mOutStringBuffer);
 		}
 	}
-
-	// The action listener for the EditText widget, to listen for the return key
-	private TextView.OnEditorActionListener mWriteListener = new TextView.OnEditorActionListener() {
-		public boolean onEditorAction(TextView view, int actionId,
-				KeyEvent event) {
-			// If the action is a key-up event on the return key, send the
-			// message
-			if (actionId == EditorInfo.IME_NULL
-					&& event.getAction() == KeyEvent.ACTION_UP) {
-				String message = view.getText().toString();
-				sendCommand(message);
-			}
-			if (D)
-				Log.i(TAG, "END onEditorAction");
-			return true;
-		}
-	};
 
 	private final void setStatus(int resId) {
 		final ActionBar actionBar = getActionBar();
@@ -290,6 +270,7 @@ public class MainActivity extends Activity {
 				if (D)
 					Log.i(TAG, "READ_MESSAGE: " + receiver.valueFromData);
 				readFullMessage = receiver.valueFromData;
+
 				Intent i = new Intent(DATA_ACTION);
 				i.putExtra(receiver.actionStringForBroadcastReceiver,
 						receiver.valueFromData);
@@ -379,28 +360,6 @@ public class MainActivity extends Activity {
 		mChatService.connect(device);
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.option_menu, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		Intent serverIntent = null;
-		switch (item.getItemId()) {
-		case R.id.secure_connect_scan:
-			// Launch the DeviceListActivity to see devices and do scan
-			serverIntent = new Intent(this, BtDeviceListActivity.class);
-			startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
-			return true;
-
-		}
-
-		return false;
-	}
-
 	class ReadResult {
 
 		String valueFromData;
@@ -411,7 +370,7 @@ public class MainActivity extends Activity {
 
 		ReadResult response = new ReadResult();
 		response.valueFromData = "";
-		for (int i = 1; i < 6; i++) {
+		for (int i = 1; i < 7; i++) {
 			response.valueFromData += data.charAt(i);
 		}
 		switch (data.charAt(0)) {
@@ -426,6 +385,9 @@ public class MainActivity extends Activity {
 			break;
 		case 'n':
 			response.actionStringForBroadcastReceiver = "MIN";
+			break;
+		case 'f':
+			response.actionStringForBroadcastReceiver = "FFT";
 			break;
 		}
 		return response;

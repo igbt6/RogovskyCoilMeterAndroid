@@ -138,6 +138,7 @@ public class Results extends Activity {
 					FFTChart fftChartBuilder = new FFTChart();
 					chartIntent = fftChartBuilder
 							.execute(getApplicationContext());
+					sendCommand("FFFF"); // start fft calculations
 					startActivity(chartIntent);
 					break;
 				}
@@ -163,12 +164,13 @@ public class Results extends Activity {
 		// MainActivity.mChatService=new BtService(Results.this, mHandler);
 		// Initialize the buffer for outgoing messages
 		mOutStringBuffer = new StringBuffer("");
-		sendCommand("FUMIKO19");
+		//sendCommand("AAAA"); // start measure
 
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				while (true) {
+					
 					try {
 						Thread.sleep(10);
 					} catch (InterruptedException e) {
@@ -202,6 +204,7 @@ public class Results extends Activity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+		sendCommand("BBBB"); // finish measure
 		unregisterReceiver(myData);
 	}
 

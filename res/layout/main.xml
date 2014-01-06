@@ -14,10 +14,10 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center_vertical"
     android:orientation="vertical" >
 
     <!--
@@ -33,25 +33,94 @@
         android:src="@drawable/connect" />
     -->
 
-    <Button
-        android:id="@+id/button1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="99dp"
-        android:text="START_MEASURE" />
-
     <GridLayout
+        android:id="@+id/gridLayout1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/button1"
         android:layout_alignParentTop="true"
         android:layout_marginTop="38dp" >
     </GridLayout>
 
     <GridLayout
+        android:id="@+id/gridLayout2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" >
     </GridLayout>
+
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/gridLayout1"
+        android:layout_marginTop="31dp" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/gridLayout1" >
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/button1"
+        style="@style/ButtonText"
+        android:layout_width="500dp"
+        android:layout_height="105dp"
+        android:layout_below="@+id/gridLayout1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="28dp"
+        android:background="@drawable/redbutton"
+        android:text="START" />
+
+    <GridLayout
+        android:id="@+id/gridLayout3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="90dp" >
+    </GridLayout>
+
+    <GridLayout
+        android:id="@+id/gridLayout4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+    </GridLayout>
+
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="100dp"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/gridLayout4"
+        android:layout_marginTop="1dp" />
+
+    <Button
+        android:id="@+id/connect"
+        style="@style/ButtonText"
+        android:layout_width="500dp"
+        android:layout_height="105dp"
+        android:layout_below="@+id/button1"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/purplebutton"
+        android:text="CONNECT" />
+
+    <Button
+        android:id="@+id/slavemode"
+        style="@style/ButtonText"
+        android:layout_width="500dp"
+        android:layout_height="105dp"
+        android:layout_below="@+id/connect"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/greenbutton"
+        android:text="SLAVE MODE" />
+
+    <Button
+        android:id="@+id/sdcard"
+        style="@style/ButtonText"
+        android:layout_width="500dp"
+        android:layout_height="105dp"
+        android:layout_below="@+id/slavemode"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/bluebutton"
+        android:text="SD CARD" />
 
 </RelativeLayout>

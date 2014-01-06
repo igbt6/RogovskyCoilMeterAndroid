@@ -47,8 +47,8 @@
     
      <string-array 
         name="COMMANDS_TO_METER">
-    <item>xSTART</item>
-    <item>xSTOP</item>  
+    <item>AAAA</item> 
+    <item>BBBB</item>  
     </string-array>
     
     

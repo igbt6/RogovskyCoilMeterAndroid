@@ -3,6 +3,7 @@ package com.inz.rogovskycurrentmeter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Method;
 import java.util.UUID;
 
 import android.R.bool;
@@ -287,8 +288,17 @@ public class BtService {
 			// Create a new listening server socket
 			try {
 
-				tmp = mAdapter.listenUsingInsecureRfcommWithServiceRecord(
-						NAME_SECURE, MY_UUID_SECURE);
+				tmp = mAdapter.listenUsingRfcommWithServiceRecord(NAME_SECURE,
+						MY_UUID_SECURE);
+
+				/*
+				 * tmp = device
+				 * .createRfcommSocketToServiceRecord(MY_UUID_SECURE);
+				 */
+				// Method m =
+				// mAdapter.getClass().getMethod("createRfcommSocket", new
+				// Class[] { int.class });
+				// tmp = (BluetoothSocket) m.invoke(device, 1)
 
 			} catch (IOException e) {
 				Log.e(TAG, "Socket Type: " + mSocketType + "listen() failed", e);
@@ -465,37 +475,55 @@ public class BtService {
 			while (true) {
 				try {
 
-					//  bytes = mmInStream.read(buffer);
-				  //String bufferT = new String(buffer, 0, bytes);  /*************TO REMOVE*******************/
-					//  Log.d(TAG, "DATA RECEIVED BYTES: "+ String.valueOf(bytes));/*************TO REMOVE*******************/
-					//  Log.d(TAG, "DATA RECEIVED BYTES: "+ String.valueOf(bufferT));/*************TO REMOVE*******************/
+					// bytes = mmInStream.read(buffer);
+					// String bufferT = new String(buffer, 0, bytes);
+					// /*************TO REMOVE*******************/
+					// Log.d(TAG, "DATA RECEIVED BYTES: "+
+					// String.valueOf(bytes));/*************TO
+					// REMOVE*******************/
+					// Log.d(TAG, "DATA RECEIVED BYTES: "+
+					// String.valueOf(bufferT));/*************TO
+					// REMOVE*******************/
 					// do wysy³ania stringow do maina
+					/*
+					 * if (mmInStream.available() > 0) { String msg = "";
+					 * Character ch; ch = (char) mmInStream.read(); //
+					 * Log.i(TAG, "ZNAKI : " + // ch.toString());//
+					 * ////////////////////////////////////// if (ch == 114 ||
+					 * ch == 109 || ch == 110 || ch == 97 || ch == 102) { //
+					 * chars 'r' , 'm' , 'n', // // 'a','f' bytesCounter = 0; do
+					 * { Log.d(TAG, "DATA RECEIVED DATA: " + ch.toString()); msg
+					 * += ch; bytesCounter++; } while ((ch = (char)
+					 * mmInStream.read()) != 120 && bytesCounter < 8); String
+					 * copyBuffer = msg; if (copyBuffer.contains(".")) {
+					 * mHandler.obtainMessage( MainActivity.MESSAGE_READ, 8, -1,
+					 * copyBuffer).sendToTarget(); } bytesCounter = 0; } }
+					 */
 					if (mmInStream.available() > 0) {
 						String msg = "";
+						String copyBuffer;
 						Character ch;
-						ch = (char) mmInStream.read();
-						//Log.i(TAG,"ZNAKI : " + ch.toString());
-						if (ch == 114||ch==109||ch==110||ch==97) {   // chars 'r' , 'm' , 'n', 'a'  
-							bytesCounter = 0;
-							do {
 
-								Log.d(TAG,
-										"DATA RECEIVED DATA: " + ch.toString());
-								///if (bytesCounter == 10) {
-								///	bytesCounter = 0;
-								///}
-								msg +=ch ;
-								bytesCounter++;
-							} 
-							while ((ch =(char) mmInStream.read()) != 120&&bytesCounter<8);
-							
-							String copyBuffer  = msg;
-							mHandler.obtainMessage(MainActivity.MESSAGE_READ,
-									8, -1, copyBuffer).sendToTarget();  // TODO 8 was changed 
-							bytesCounter = 0; 
+						while (true) {
+							ch = (char) mmInStream.read();
+							msg += ch;
+							Log.d(TAG, "DATA RECEIVED DATA: " + ch.toString());
+							if (ch == 120) {
+								copyBuffer = msg;
+
+								if (copyBuffer.contains(".")) {
+
+									mHandler.obtainMessage(
+											MainActivity.MESSAGE_READ, 8, -1,
+											copyBuffer).sendToTarget();
+
+								}
+								break;
+							}
 						}
 					}
-					 } catch (IOException e) {
+
+				} catch (IOException e) {
 					Log.e(TAG, "disconnected", e);
 					connectionLost();
 					// Start the service over to restart listening mode
